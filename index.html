@@ -1,69 +1,840 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mein Projekt</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fintro — Learn Money, For Real</title>
+  <meta name="description" content="Fintro is a financial literacy platform built for teenagers. Learn money through interactive lessons, quizzes, and games." />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-    <header>
-        <nav>
-            <a href="/" class="logo">LP</a>
-            <div class="nav-links">
-                <a href="#about">Über mich</a>
-                <a href="#projekte">Projekte</a>
-                <a href="#kontakt">Kontakt</a>
-            </div>
-        </nav>
-    </header>
+<!-- ════════════════════════════════════════
+     XP TOAST
+════════════════════════════════════════ -->
+<div class="xp-toast" id="xp-toast">+50 XP 🎉</div>
 
-    <main>
-        <section class="hero">
-            <h1>Hallo, ich bin Louis.</h1>
-            <p class="subtitle">Hier entsteht meine persönliche Website. Diesen Text kannst du einfach anpassen.</p>
-            <a href="#projekte" class="cta">Mehr erfahren</a>
-        </section>
+<!-- ════════════════════════════════════════
+     HOME SCREEN
+════════════════════════════════════════ -->
+<div class="screen active" id="home-screen">
 
-        <section id="about" class="section">
-            <h2>Über mich</h2>
-            <p>
-                Schreib hier ein paar Sätze über dich. Was machst du?
-                Was interessiert dich? Woran arbeitest du gerade?
-            </p>
-        </section>
+  <header class="home-header">
+    <div class="logo">fin<span>tro</span></div>
+    <div class="xp-bar-wrap">
+      <span class="xp-label">XP</span>
+      <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+      <span class="xp-count" id="xp-count">0 / 500</span>
+    </div>
+  </header>
 
-        <section id="projekte" class="section">
-            <h2>Projekte</h2>
-            <div class="card-grid">
-                <div class="card">
-                    <h3>Projekt 1</h3>
-                    <p>Beschreibe dein erstes Projekt hier. Was war die Idee? Was hast du gelernt?</p>
-                    <a href="#">Details →</a>
-                </div>
-                <div class="card">
-                    <h3>Projekt 2</h3>
-                    <p>Noch ein Projekt. Ersetze diesen Text mit deinem eigenen Inhalt.</p>
-                    <a href="#">Details →</a>
-                </div>
-                <div class="card">
-                    <h3>Projekt 3</h3>
-                    <p>So viele Karten wie du willst. Kopiere einfach diesen Block.</p>
-                    <a href="#">Details →</a>
-                </div>
-            </div>
-        </section>
+  <section class="hero">
+    <h1>Money is a <em>skill.</em><br>Let's learn it.</h1>
+    <p>Real finance, zero boring. Complete chapters, earn XP, unlock the next level.</p>
+  </section>
 
-        <section id="kontakt" class="section">
-            <h2>Kontakt</h2>
-            <p>Du erreichst mich unter: <a href="mailto:deine@email.com">deine@email.com</a></p>
-        </section>
-    </main>
+  <div class="stats-row">
+    <div class="stat-card">
+      <span class="val" id="stat-chapters">0</span>
+      <span class="lbl">Chapters Done</span>
+    </div>
+    <div class="stat-card">
+      <span class="val" id="stat-xp">0</span>
+      <span class="lbl">Total XP</span>
+    </div>
+    <div class="stat-card">
+      <span class="val" id="stat-streak">0🔥</span>
+      <span class="lbl">Day Streak</span>
+    </div>
+  </div>
 
-    <footer>
-        <p>© 2026 Louis. Gebaut mit GitHub + Netlify.</p>
-    </footer>
+  <p class="unit-label">Unit 1</p>
+  <p class="unit-title">The Foundation — How Money Actually Works</p>
+
+  <div class="chapter-list" id="chapter-list">
+    <!-- Rendered by JS -->
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════════
+     CHAPTER SCREEN
+════════════════════════════════════════ -->
+<div class="screen" id="chapter-screen">
+
+  <div class="chapter-nav">
+    <button class="btn-back" onclick="goHome()">← Back</button>
+    <span class="chapter-meta" id="ch-meta">UNIT 1 · CHAPTER 1</span>
+  </div>
+
+  <h2 id="ch-title" style="margin-bottom:0.4rem;"></h2>
+  <p id="ch-subtitle" style="margin-bottom:1.5rem;"></p>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('lesson', this)">📖 Lesson</button>
+    <button class="tab-btn" onclick="switchTab('vocab', this)">🔤 Vocab</button>
+    <button class="tab-btn" onclick="switchTab('quiz', this)">✅ Quiz</button>
+    <button class="tab-btn" onclick="switchTab('game', this)">🎮 Game</button>
+  </div>
+
+  <!-- LESSON -->
+  <div class="tab-panel active" id="tab-lesson">
+    <div class="lesson-content" id="lesson-content"></div>
+  </div>
+
+  <!-- VOCAB -->
+  <div class="tab-panel" id="tab-vocab">
+    <div class="vocab-grid" id="vocab-grid"></div>
+    <p class="vocab-hint">Click a card to reveal the definition</p>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="tab-panel" id="tab-quiz">
+    <div class="quiz-wrap" id="quiz-wrap"></div>
+  </div>
+
+  <!-- GAME -->
+  <div class="tab-panel" id="tab-game">
+    <div id="game-container"></div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════════
+     DATA
+════════════════════════════════════════ -->
+<script>
+const CHAPTERS = [
+  {
+    id: 1,
+    title: "What is Money?",
+    subtitle: "From shells to smartphones — the real story of currency",
+    xpReward: 150,
+    lesson: `
+      <h2>What is Money?</h2>
+      <p>Long before money existed, people traded directly — fish for arrows, grain for cloth. This is called <strong>barter</strong>. It worked, but it had a huge problem: you could only trade if both people wanted exactly what the other had.</p>
+      <div class="highlight">💡 This problem is called the "double coincidence of wants." If you have fish but want bread, you need to find someone who has bread AND wants fish — at the same time.</div>
+      <p>Money solved this by becoming a universal middle step. Instead of trading fish for bread directly, you sell fish for money, then buy bread with that money. Simple. Powerful.</p>
+      <p>Over time, money evolved from rare shells and stones to gold coins, paper notes, and today — digital numbers in a bank app. The <em>form</em> changes, but the <em>function</em> stays the same.</p>
+      <h3 style="margin:1.25rem 0 0.5rem">Money has 3 jobs:</h3>
+      <p><strong>1. Medium of Exchange</strong> — It's accepted everywhere for buying things.<br>
+      <strong>2. Store of Value</strong> — You can save it and spend it later.<br>
+      <strong>3. Unit of Account</strong> — It gives everything a price tag, so we can compare value.</p>
+      <div class="highlight">🌍 Today, most money isn't physical at all. About 90% of global money exists only as digital records. When you tap your phone to pay, no coins move — just numbers.</div>
+      <p>Understanding money isn't just about having it. It's about knowing how it works so you can make it work <em>for you</em>.</p>
+    `,
+    vocab: [
+      { term: "Barter", def: "Directly exchanging goods or services without using money." },
+      { term: "Currency", def: "The system of money in use in a country — coins, bills, or digital." },
+      { term: "Medium of Exchange", def: "Something accepted by everyone as payment for goods and services." },
+      { term: "Store of Value", def: "An asset that holds its worth over time, like money or gold." },
+      { term: "Inflation", def: "When prices rise over time, meaning your money buys less than before." },
+    ],
+    quiz: [
+      {
+        q: "What is the main problem with barter?",
+        options: ["It's too slow", "You need double coincidence of wants", "No one wants to trade", "It only works with food"],
+        correct: 1,
+        explain: "Barter requires both people to want exactly what the other has — at the same time. Very hard to arrange!"
+      },
+      {
+        q: "Which of these is NOT a function of money?",
+        options: ["Medium of exchange", "Store of value", "Source of happiness", "Unit of account"],
+        correct: 2,
+        explain: "Money has 3 official functions: medium of exchange, store of value, and unit of account. Happiness isn't one of them (unfortunately)."
+      },
+      {
+        q: "About what percentage of global money exists only digitally?",
+        options: ["10%", "40%", "70%", "90%"],
+        correct: 3,
+        explain: "Around 90% of global money is digital — just numbers in computer systems. Physical cash is actually the minority."
+      },
+      {
+        q: "If prices keep rising and your salary stays the same, what happens to your purchasing power?",
+        options: ["It stays the same", "It increases", "It decreases", "It doubles"],
+        correct: 2,
+        explain: "This is inflation. When prices rise but your income doesn't, your money buys less. Your purchasing power shrinks."
+      },
+      {
+        q: "A 'unit of account' means money is used to...",
+        options: ["Count your friends", "Give everything a price so values can be compared", "Open bank accounts", "Pay taxes"],
+        correct: 1,
+        explain: "Unit of account means money gives us a common language for value. Without it, how would you compare a haircut to a pizza?"
+      },
+    ],
+    game: "barter"
+  },
+  {
+    id: 2,
+    title: "Compound Interest",
+    subtitle: "The quiet force that builds — or destroys — your wealth",
+    xpReward: 150,
+    lesson: `
+      <h2>Compound Interest</h2>
+      <p>Albert Einstein reportedly called compound interest the "eighth wonder of the world." Whether he really said it or not — the math is undeniably powerful.</p>
+      <p>Here's the difference in one sentence: <strong>simple interest</strong> pays you on your original amount only. <strong>Compound interest</strong> pays you on your original amount <em>plus</em> all the interest you've already earned.</p>
+      <div class="highlight">📐 The formula: A = P × (1 + r/n)^(n×t)<br>P = principal, r = annual rate, n = compounds per year, t = years</div>
+      <p>Let's make it real. You invest $1,000 at 8% per year:</p>
+      <p>After 10 years: <strong>$2,159</strong><br>After 20 years: <strong>$4,661</strong><br>After 30 years: <strong>$10,063</strong></p>
+      <p>Notice: the growth isn't equal. The <em>longer</em> you wait, the <em>faster</em> it grows. That's the snowball effect — your interest earns interest, which earns more interest.</p>
+      <div class="highlight">⚠️ The same math works against you with debt. Credit card interest of 20% compounds too — and it grows just as aggressively.</div>
+      <p>The #1 lesson from compound interest: <strong>start early</strong>. Investing $100/month starting at 17 produces dramatically more wealth than starting at 27, even if you invest more money later. Time is the real ingredient.</p>
+    `,
+    vocab: [
+      { term: "Principal", def: "The original amount of money saved or invested, before any interest." },
+      { term: "Interest Rate", def: "The percentage of the principal charged or paid per year." },
+      { term: "Compound Interest", def: "Interest earned on both the principal and the accumulated interest." },
+      { term: "Simple Interest", def: "Interest calculated only on the original principal, not on earned interest." },
+      { term: "Time Value of Money", def: "The concept that money available now is worth more than the same amount in the future." },
+    ],
+    quiz: [
+      {
+        q: "What makes compound interest different from simple interest?",
+        options: ["It's faster to calculate", "It earns interest on interest", "It only applies to loans", "It's always lower"],
+        correct: 1,
+        explain: "Compound interest earns interest on your accumulated interest, not just the principal. This creates exponential growth."
+      },
+      {
+        q: "You invest $500 at 10% simple interest for 2 years. How much interest do you earn?",
+        options: ["$50", "$100", "$105", "$110"],
+        correct: 1,
+        explain: "$500 × 10% = $50/year. Over 2 years = $100. Simple interest is just: principal × rate × time."
+      },
+      {
+        q: "Why is starting to invest early so important with compound interest?",
+        options: ["Rates are higher when young", "Time multiplies the compounding effect", "It's legally required", "Inflation doesn't apply"],
+        correct: 1,
+        explain: "Every extra year of compounding adds a multiplied layer of growth. Time is the most powerful variable in the equation."
+      },
+      {
+        q: "Compound interest can HURT you when...",
+        options: ["You have savings", "You have a high-interest debt", "Interest rates are low", "You invest in stocks"],
+        correct: 1,
+        explain: "Credit card debt at 20%+ compounds against you. The same power that grows savings can grow debt just as fast."
+      },
+      {
+        q: "What does 'compounding frequency' mean?",
+        options: ["How often you check your balance", "How often interest is calculated and added to your account", "The number of bank accounts you have", "Your monthly savings rate"],
+        correct: 1,
+        explain: "Compounding frequency is how often interest is added — daily, monthly, or yearly. More frequent = slightly more growth."
+      },
+    ],
+    game: "timemachine"
+  },
+  {
+    id: 3,
+    title: "Income & Earning",
+    subtitle: "Where money comes from — and how to get more of it",
+    xpReward: 200,
+    lesson: `
+      <h2>Income & Earning</h2>
+      <p>Before you can save, invest, or spend wisely — you need income. But most people think of income only as a paycheck. The reality is far more interesting.</p>
+      <p><strong>Active income</strong> is money you earn by exchanging your time. A job, freelancing, tutoring — you stop working, the money stops. It's how most people start, and that's fine.</p>
+      <div class="highlight">💼 90% of people rely almost entirely on active income. That's not bad — but it creates a ceiling on how much you can earn, because you only have 24 hours in a day.</div>
+      <p><strong>Passive income</strong> is money that flows without you actively trading time for it. Rental income, dividends from stocks, royalties from a book, revenue from an app — these can pay you while you sleep.</p>
+      <p>Building passive income takes upfront work or capital. It's not magic. But over time, it can compound just like interest does.</p>
+      <h3 style="margin:1.25rem 0 0.5rem">How to increase your income:</h3>
+      <p><strong>1. Build skills</strong> — More valuable skills = higher pay ceiling.<br>
+      <strong>2. Negotiate</strong> — Most people never ask for more. The ones who do, often get it.<br>
+      <strong>3. Diversify</strong> — Side projects, freelance work, or investing can add streams.<br>
+      <strong>4. Think long term</strong> — Education and skills compound over decades.</p>
+      <div class="highlight">📊 Gross income = what you earn before taxes. Net income (take-home pay) = what's left after taxes and deductions. Always budget from your net income.</div>
+      <p>Understanding income types changes how you think about work — not just as something you do, but as a system you can design.</p>
+    `,
+    vocab: [
+      { term: "Active Income", def: "Money earned directly from working — stops when you stop working." },
+      { term: "Passive Income", def: "Money earned with minimal ongoing effort, like rent or dividends." },
+      { term: "Gross Income", def: "Total earnings before any taxes or deductions are taken out." },
+      { term: "Net Income", def: "Take-home pay after taxes and deductions — what you actually receive." },
+      { term: "Diversification", def: "Spreading income (or investments) across multiple sources to reduce risk." },
+    ],
+    quiz: [
+      {
+        q: "What is active income?",
+        options: ["Money from investments", "Money earned by trading time for work", "Rental profits", "Lottery winnings"],
+        correct: 1,
+        explain: "Active income is directly tied to your time and effort. When you stop working, it stops coming in."
+      },
+      {
+        q: "If you earn $3,000/month but pay $800 in taxes, what is your net income?",
+        options: ["$3,000", "$2,200", "$800", "$3,800"],
+        correct: 1,
+        explain: "$3,000 - $800 = $2,200. Net income is what you actually take home. Always budget from this number."
+      },
+      {
+        q: "Which is an example of passive income?",
+        options: ["Waiting tables", "Working a 9-5", "Receiving rent from a property", "Teaching piano lessons"],
+        correct: 2,
+        explain: "Rental income continues whether you're working or not — that's the key feature of passive income."
+      },
+      {
+        q: "Why is diversifying income sources important?",
+        options: ["It's legally required", "It reduces risk if one source disappears", "It always earns more", "Banks require it"],
+        correct: 1,
+        explain: "If your only income stream disappears (job loss, injury), diversification means you still have other sources flowing."
+      },
+      {
+        q: "What's the most important reason to know the difference between gross and net income?",
+        options: ["To impress your employer", "So you budget from what you actually receive", "To calculate passive income", "Banks require it"],
+        correct: 1,
+        explain: "Many people budget from gross income and are confused why they can't make it work. Net income is your real number."
+      },
+    ],
+    game: "incomestreams"
+  },
+];
+
+// ════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════
+let state = JSON.parse(localStorage.getItem('fintro_state') || 'null') || {
+  xp: 0,
+  completedChapters: [],
+  streak: 1,
+};
+
+let currentChapter = null;
+let currentTab = 'lesson';
+let quizState = { index: 0, score: 0, answered: false, done: false };
+
+function saveState() {
+  localStorage.setItem('fintro_state', JSON.stringify(state));
+}
+
+// ════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function goHome() {
+  showScreen('home-screen');
+  renderHome();
+}
+
+function openChapter(chapterId) {
+  const ch = CHAPTERS.find(c => c.id === chapterId);
+  if (!ch) return;
+
+  // Check if locked
+  const idx = CHAPTERS.indexOf(ch);
+  if (idx > 0 && !state.completedChapters.includes(CHAPTERS[idx - 1].id)) return;
+
+  currentChapter = ch;
+  quizState = { index: 0, score: 0, answered: false, done: false };
+
+  document.getElementById('ch-meta').textContent = `UNIT 1 · CHAPTER ${ch.id}`;
+  document.getElementById('ch-title').textContent = ch.title;
+  document.getElementById('ch-subtitle').textContent = ch.subtitle;
+
+  switchTab('lesson', document.querySelector('.tab-btn'));
+  renderLesson();
+  showScreen('chapter-screen');
+}
+
+// ════════════════════════════════════════
+// HOME RENDER
+// ════════════════════════════════════════
+function renderHome() {
+  // XP bar
+  const maxXP = 500;
+  const pct = Math.min((state.xp / maxXP) * 100, 100);
+  document.getElementById('xp-fill').style.width = pct + '%';
+  document.getElementById('xp-count').textContent = `${state.xp} / ${maxXP}`;
+
+  // Stats
+  document.getElementById('stat-chapters').textContent = state.completedChapters.length;
+  document.getElementById('stat-xp').textContent = state.xp;
+  document.getElementById('stat-streak').textContent = state.streak + '🔥';
+
+  // Chapter list
+  const list = document.getElementById('chapter-list');
+  list.innerHTML = '';
+
+  CHAPTERS.forEach((ch, idx) => {
+    const isCompleted = state.completedChapters.includes(ch.id);
+    const isLocked = idx > 0 && !state.completedChapters.includes(CHAPTERS[idx - 1].id);
+    const isActive = !isLocked && !isCompleted;
+
+    const row = document.createElement('div');
+    row.className = `chapter-row${isLocked ? ' locked' : ''}${isCompleted ? ' completed' : ''}`;
+    if (!isLocked) row.onclick = () => openChapter(ch.id);
+
+    let badge = '';
+    if (isLocked)     badge = `<span class="ch-badge">🔒 Locked</span>`;
+    else if (isCompleted) badge = `<span class="ch-badge done">✓ Done</span>`;
+    else              badge = `<span class="ch-badge active">▶ Start</span>`;
+
+    row.innerHTML = `
+      <span class="ch-num">0${ch.id}</span>
+      <div class="ch-info">
+        <div class="ch-title">${ch.title}</div>
+        <div class="ch-sub">${ch.subtitle}</div>
+      </div>
+      <span class="ch-xp" style="font-size:0.75rem;color:var(--amber);font-weight:700;white-space:nowrap;">+${ch.xpReward} XP</span>
+      ${badge}
+    `;
+    list.appendChild(row);
+  });
+}
+
+// ════════════════════════════════════════
+// TAB SWITCHING
+// ════════════════════════════════════════
+function switchTab(name, btn) {
+  currentTab = name;
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+
+  if (name === 'lesson') renderLesson();
+  if (name === 'vocab')  renderVocab();
+  if (name === 'quiz')   renderQuiz();
+  if (name === 'game')   renderGame();
+}
+
+// ════════════════════════════════════════
+// LESSON
+// ════════════════════════════════════════
+function renderLesson() {
+  document.getElementById('lesson-content').innerHTML = currentChapter.lesson;
+}
+
+// ════════════════════════════════════════
+// VOCAB
+// ════════════════════════════════════════
+function renderVocab() {
+  const grid = document.getElementById('vocab-grid');
+  grid.innerHTML = '';
+  currentChapter.vocab.forEach(v => {
+    const card = document.createElement('div');
+    card.className = 'vocab-card';
+    card.innerHTML = `<div class="term">${v.term}</div><div class="def" style="display:none">${v.def}</div>`;
+    card.onclick = () => {
+      const def = card.querySelector('.def');
+      def.style.display = def.style.display === 'none' ? 'block' : 'none';
+    };
+    grid.appendChild(card);
+  });
+}
+
+// ════════════════════════════════════════
+// QUIZ
+// ════════════════════════════════════════
+function renderQuiz() {
+  const wrap = document.getElementById('quiz-wrap');
+  const qs = currentChapter.quiz;
+
+  if (quizState.done) {
+    const pct = Math.round((quizState.score / qs.length) * 100);
+    wrap.innerHTML = `
+      <div class="quiz-result">
+        <span class="score-big">${quizState.score}/${qs.length}</span>
+        <h3 style="margin-bottom:0.5rem">${pct >= 80 ? '🎉 Great work!' : pct >= 60 ? '👍 Good effort!' : '💪 Keep practicing!'}</h3>
+        <p>${pct >= 80 ? 'You really understand this chapter.' : 'Review the lesson and try again!'}</p>
+        <button class="btn-primary" onclick="unlockAfterQuiz()">Continue to Game →</button>
+        ${pct < 80 ? `<br><br><button class="btn-primary" onclick="resetQuiz()" style="background:var(--surface2);color:var(--text);margin-top:0.5rem">Retry Quiz</button>` : ''}
+      </div>`;
+    return;
+  }
+
+  const q = qs[quizState.index];
+
+  // Dots
+  let dots = '';
+  qs.forEach((_, i) => {
+    const cls = i < quizState.index ? 'done' : i === quizState.index ? 'current' : '';
+    dots += `<div class="quiz-dot ${cls}"></div>`;
+  });
+
+  wrap.innerHTML = `
+    <div class="quiz-progress">
+      <div class="quiz-dots">${dots}</div>
+      <span style="font-size:0.8rem;color:var(--muted)">${quizState.index + 1} of ${qs.length}</span>
+    </div>
+    <div class="quiz-question-box">
+      <div class="quiz-q-num">QUESTION ${quizState.index + 1}</div>
+      <div class="quiz-q-text">${q.q}</div>
+    </div>
+    <div class="quiz-options" id="quiz-options">
+      ${q.options.map((o, i) => `<button class="quiz-option" onclick="answerQuiz(${i})">${o}</button>`).join('')}
+    </div>
+    <div id="quiz-feedback"></div>
+    <button class="btn-primary" id="quiz-next" style="display:none" onclick="nextQuestion()">Next →</button>
+  `;
+}
+
+function answerQuiz(idx) {
+  if (quizState.answered) return;
+  quizState.answered = true;
+
+  const q = currentChapter.quiz[quizState.index];
+  const opts = document.querySelectorAll('.quiz-option');
+  opts.forEach(o => o.disabled = true);
+  opts[idx].classList.add(idx === q.correct ? 'correct' : 'wrong');
+  opts[q.correct].classList.add('correct');
+
+  const fb = document.getElementById('quiz-feedback');
+  const correct = idx === q.correct;
+  if (correct) quizState.score++;
+  fb.className = `quiz-feedback ${correct ? 'correct' : 'wrong'}`;
+  fb.innerHTML = `${correct ? '✓ Correct!' : '✗ Not quite.'} ${q.explain}`;
+
+  document.getElementById('quiz-next').style.display = 'block';
+}
+
+function nextQuestion() {
+  quizState.index++;
+  quizState.answered = false;
+  if (quizState.index >= currentChapter.quiz.length) {
+    quizState.done = true;
+    awardXP(currentChapter.xpReward);
+    if (!state.completedChapters.includes(currentChapter.id)) {
+      state.completedChapters.push(currentChapter.id);
+      saveState();
+    }
+  }
+  renderQuiz();
+}
+
+function resetQuiz() {
+  quizState = { index: 0, score: 0, answered: false, done: false };
+  renderQuiz();
+}
+
+function unlockAfterQuiz() {
+  switchTab('game', document.querySelectorAll('.tab-btn')[3]);
+}
+
+// ════════════════════════════════════════
+// XP
+// ════════════════════════════════════════
+function awardXP(amount) {
+  state.xp += amount;
+  saveState();
+  const toast = document.getElementById('xp-toast');
+  toast.textContent = `+${amount} XP 🎉`;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+// ════════════════════════════════════════
+// GAMES
+// ════════════════════════════════════════
+function renderGame() {
+  const c = document.getElementById('game-container');
+  if (currentChapter.game === 'barter')       c.innerHTML = barterGameHTML();
+  if (currentChapter.game === 'timemachine')  c.innerHTML = timeMachineHTML();
+  if (currentChapter.game === 'incomestreams') c.innerHTML = incomeStreamsHTML();
+
+  if (currentChapter.game === 'timemachine') initTimeMachine();
+  if (currentChapter.game === 'incomestreams') initIncomeStreams();
+}
+
+// ─── GAME 1: Barter Market ───────────────
+const BARTER_ITEMS = {
+  alice: [
+    { name: "🐟 Fish (×5)", value: 5 },
+    { name: "🌾 Grain (bag)", value: 8 },
+    { name: "🪵 Wood (plank)", value: 4 },
+  ],
+  bob: [
+    { name: "🍞 Bread (loaf)", value: 6 },
+    { name: "🏹 Arrows (×10)", value: 7 },
+    { name: "🧣 Wool cloth", value: 9 },
+  ],
+};
+
+let barterSelected = { alice: null, bob: null };
+let barterScore = 0;
+
+function barterGameHTML() {
+  return `
+    <div class="game-wrap">
+      <div class="game-title">🏪 Barter Market</div>
+      <div class="game-desc">Pick one item from Alice and one from Bob. If their values are close (within 2 points), the trade succeeds! See how hard bartering really is.</div>
+      <div class="game-score">🪙 Successful trades: <span id="barter-score">0</span></div>
+      <div class="barter-board">
+        <div class="barter-col">
+          <h4>Alice has</h4>
+          ${BARTER_ITEMS.alice.map((it, i) => `<div class="barter-item" id="alice-${i}" onclick="selectBarter('alice',${i})">${it.name} <small style="color:var(--muted)">(val: ${it.value})</small></div>`).join('')}
+        </div>
+        <div class="barter-arrow">⇄</div>
+        <div class="barter-col">
+          <h4>Bob has</h4>
+          ${BARTER_ITEMS.bob.map((it, i) => `<div class="barter-item" id="bob-${i}" onclick="selectBarter('bob',${i})">${it.name} <small style="color:var(--muted)">(val: ${it.value})</small></div>`).join('')}
+        </div>
+      </div>
+      <div class="barter-log" id="barter-log">Select one item from each side to attempt a trade...</div>
+      <button class="btn-primary" onclick="attemptTrade()" style="margin-top:0.75rem">Attempt Trade</button>
+    </div>`;
+}
+
+function selectBarter(who, idx) {
+  barterSelected[who] = idx;
+  document.querySelectorAll(`.barter-col`).forEach(col => {
+    col.querySelectorAll('.barter-item').forEach(el => el.classList.remove('selected'));
+  });
+  // Highlight selected in each column
+  BARTER_ITEMS.alice.forEach((_, i) => {
+    const el = document.getElementById(`alice-${i}`);
+    if (el && barterSelected.alice === i) el.classList.add('selected');
+  });
+  BARTER_ITEMS.bob.forEach((_, i) => {
+    const el = document.getElementById(`bob-${i}`);
+    if (el && barterSelected.bob === i) el.classList.add('selected');
+  });
+}
+
+function attemptTrade() {
+  const log = document.getElementById('barter-log');
+  if (barterSelected.alice === null || barterSelected.bob === null) {
+    log.textContent = '⚠️ Select one item from each side first!';
+    return;
+  }
+  const a = BARTER_ITEMS.alice[barterSelected.alice];
+  const b = BARTER_ITEMS.bob[barterSelected.bob];
+  const diff = Math.abs(a.value - b.value);
+  if (diff <= 2) {
+    barterScore++;
+    document.getElementById('barter-score').textContent = barterScore;
+    log.innerHTML = `✅ Trade successful! ${a.name} ↔ ${b.name} (values: ${a.value} vs ${b.value}). Close enough! 🎉`;
+  } else {
+    log.innerHTML = `❌ Trade failed. ${a.name} (val: ${a.value}) vs ${b.name} (val: ${b.value}) — too far apart. Neither side agrees it's fair.`;
+  }
+  barterSelected = { alice: null, bob: null };
+  document.querySelectorAll('.barter-item').forEach(el => el.classList.remove('selected'));
+}
+
+// ─── GAME 2: Time Machine (Compound Interest) ───
+function timeMachineHTML() {
+  return `
+    <div class="game-wrap">
+      <div class="game-title">⏱ Time Machine</div>
+      <div class="game-desc">Drag the sliders to see how compound interest grows your money over time.</div>
+      <div class="tm-controls">
+        <div class="tm-control">
+          <label>Starting amount: <span class="tm-val" id="tm-principal-val">$1,000</span></label>
+          <input type="range" id="tm-principal" min="100" max="10000" step="100" value="1000" oninput="updateTM()">
+        </div>
+        <div class="tm-control">
+          <label>Annual interest rate: <span class="tm-val" id="tm-rate-val">7%</span></label>
+          <input type="range" id="tm-rate" min="1" max="20" step="1" value="7" oninput="updateTM()">
+        </div>
+        <div class="tm-control">
+          <label>Years: <span class="tm-val" id="tm-years-val">20</span></label>
+          <input type="range" id="tm-years" min="1" max="50" step="1" value="20" oninput="updateTM()">
+        </div>
+        <div class="tm-control">
+          <label>Monthly contribution: <span class="tm-val" id="tm-contrib-val">$50</span></label>
+          <input type="range" id="tm-contrib" min="0" max="500" step="10" value="50" oninput="updateTM()">
+        </div>
+      </div>
+      <canvas class="tm-chart" id="tm-canvas"></canvas>
+      <div class="tm-summary" id="tm-summary"></div>
+    </div>`;
+}
+
+function initTimeMachine() { updateTM(); }
+
+function updateTM() {
+  const P = +document.getElementById('tm-principal').value;
+  const r = +document.getElementById('tm-rate').value / 100;
+  const t = +document.getElementById('tm-years').value;
+  const contrib = +document.getElementById('tm-contrib').value;
+
+  document.getElementById('tm-principal-val').textContent = '$' + P.toLocaleString();
+  document.getElementById('tm-rate-val').textContent = (r * 100).toFixed(0) + '%';
+  document.getElementById('tm-years-val').textContent = t;
+  document.getElementById('tm-contrib-val').textContent = '$' + contrib;
+
+  // Calculate year-by-year
+  const years = [], amounts = [], invested = [];
+  let total = P;
+  let totalInvested = P;
+  for (let y = 0; y <= t; y++) {
+    years.push(y);
+    amounts.push(Math.round(total));
+    invested.push(Math.round(totalInvested));
+    total = total * (1 + r) + contrib * 12;
+    totalInvested += contrib * 12;
+  }
+
+  drawTMChart(years, amounts, invested);
+
+  const finalAmount = amounts[amounts.length - 1];
+  const finalInvested = invested[invested.length - 1];
+  const gain = finalAmount - finalInvested;
+
+  document.getElementById('tm-summary').innerHTML = `
+    <div class="tm-stat"><span>Final balance</span><strong>$${finalAmount.toLocaleString()}</strong></div>
+    <div class="tm-stat"><span>Total invested</span><strong style="color:var(--blue)">$${finalInvested.toLocaleString()}</strong></div>
+    <div class="tm-stat"><span>Interest earned</span><strong>$${gain.toLocaleString()}</strong></div>
+  `;
+}
+
+function drawTMChart(years, amounts, invested) {
+  const canvas = document.getElementById('tm-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+  const W = canvas.width, H = canvas.height;
+  const pad = { top: 16, right: 16, bottom: 32, left: 60 };
+
+  const maxVal = Math.max(...amounts);
+  const scaleY = v => H - pad.bottom - ((v / maxVal) * (H - pad.top - pad.bottom));
+  const scaleX = i => pad.left + (i / (years.length - 1)) * (W - pad.left - pad.right);
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Grid lines
+  ctx.strokeStyle = '#ffffff08';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (i / 4) * (H - pad.top - pad.bottom);
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
+    const val = maxVal * (1 - i / 4);
+    ctx.fillStyle = '#64748b';
+    ctx.font = '10px Syne, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('$' + Math.round(val).toLocaleString(), pad.left - 6, y + 4);
+  }
+
+  // Invested area
+  ctx.beginPath();
+  ctx.moveTo(scaleX(0), scaleY(invested[0]));
+  invested.forEach((v, i) => ctx.lineTo(scaleX(i), scaleY(v)));
+  ctx.lineTo(scaleX(years.length - 1), H - pad.bottom);
+  ctx.lineTo(scaleX(0), H - pad.bottom);
+  ctx.closePath();
+  ctx.fillStyle = '#3b82f620';
+  ctx.fill();
+
+  // Compound area
+  ctx.beginPath();
+  ctx.moveTo(scaleX(0), scaleY(amounts[0]));
+  amounts.forEach((v, i) => ctx.lineTo(scaleX(i), scaleY(v)));
+  ctx.lineTo(scaleX(years.length - 1), H - pad.bottom);
+  ctx.lineTo(scaleX(0), H - pad.bottom);
+  ctx.closePath();
+  ctx.fillStyle = '#22c55e22';
+  ctx.fill();
+
+  // Compound line
+  ctx.beginPath();
+  ctx.strokeStyle = '#22c55e';
+  ctx.lineWidth = 2.5;
+  amounts.forEach((v, i) => i === 0 ? ctx.moveTo(scaleX(i), scaleY(v)) : ctx.lineTo(scaleX(i), scaleY(v)));
+  ctx.stroke();
+
+  // Invested line
+  ctx.beginPath();
+  ctx.strokeStyle = '#3b82f6';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4, 4]);
+  invested.forEach((v, i) => i === 0 ? ctx.moveTo(scaleX(i), scaleY(v)) : ctx.lineTo(scaleX(i), scaleY(v)));
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // X axis labels
+  ctx.fillStyle = '#64748b';
+  ctx.font = '10px Syne, sans-serif';
+  ctx.textAlign = 'center';
+  const step = Math.ceil(years.length / 5);
+  years.forEach((y, i) => {
+    if (i % step === 0 || i === years.length - 1) {
+      ctx.fillText('yr ' + y, scaleX(i), H - 8);
+    }
+  });
+}
+
+// ─── GAME 3: Income Streams ───────────────
+const INCOME_SOURCES = [
+  { emoji: "💼", name: "Part-time Job", earn: 600, type: "active" },
+  { emoji: "🎨", name: "Freelance Design", earn: 400, type: "active" },
+  { emoji: "📹", name: "YouTube Channel", earn: 120, type: "passive" },
+  { emoji: "📚", name: "Sell an eBook", earn: 80, type: "passive" },
+  { emoji: "🏠", name: "Rent a Room", earn: 500, type: "passive" },
+  { emoji: "📈", name: "Dividend Stocks", earn: 60, type: "passive" },
+];
+
+let incomeActive = new Set();
+
+function incomeStreamsHTML() {
+  return `
+    <div class="game-wrap">
+      <div class="game-title">💰 Income Builder</div>
+      <div class="game-desc">Click income sources to activate them. Build your monthly portfolio — spot which are active vs passive!</div>
+      <div class="income-grid" id="income-grid"></div>
+      <div class="income-total">
+        <div>
+          <div class="lbl">Monthly income</div>
+          <div style="font-size:0.72rem;color:var(--muted);margin-top:2px" id="income-breakdown"></div>
+        </div>
+        <div class="amount" id="income-total">$0/mo</div>
+      </div>
+    </div>`;
+}
+
+function initIncomeStreams() {
+  incomeActive = new Set();
+  renderIncomeGrid();
+}
+
+function renderIncomeGrid() {
+  const grid = document.getElementById('income-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  INCOME_SOURCES.forEach((src, i) => {
+    const card = document.createElement('div');
+    card.className = `income-card${incomeActive.has(i) ? ' active' : ''}`;
+    card.innerHTML = `
+      <span class="ic-emoji">${src.emoji}</span>
+      <div class="ic-name">${src.name}</div>
+      <div class="ic-earn">+$${src.earn}/mo · ${src.type}</div>
+    `;
+    card.onclick = () => {
+      if (incomeActive.has(i)) incomeActive.delete(i);
+      else incomeActive.add(i);
+      renderIncomeGrid();
+      updateIncomeTotal();
+    };
+    grid.appendChild(card);
+  });
+  updateIncomeTotal();
+}
+
+function updateIncomeTotal() {
+  let total = 0, activeAmt = 0, passiveAmt = 0;
+  incomeActive.forEach(i => {
+    const src = INCOME_SOURCES[i];
+    total += src.earn;
+    if (src.type === 'active') activeAmt += src.earn;
+    else passiveAmt += src.earn;
+  });
+  const totalEl = document.getElementById('income-total');
+  const breakEl = document.getElementById('income-breakdown');
+  if (totalEl) totalEl.textContent = '$' + total + '/mo';
+  if (breakEl) breakEl.textContent = incomeActive.size === 0
+    ? 'Select sources above'
+    : `Active: $${activeAmt} · Passive: $${passiveAmt}`;
+}
+
+// ════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════
+window.addEventListener('load', () => {
+  renderHome();
+});
+
+window.addEventListener('resize', () => {
+  if (currentTab === 'game' && currentChapter?.game === 'timemachine') updateTM();
+});
+</script>
 
 </body>
 </html>

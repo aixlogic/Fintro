@@ -1,11 +1,8 @@
-# Netlify Konfiguration
-# Diese Datei muss normalerweise nicht geändert werden.
+# netlify.toml — Fintro deployment config
 
 [build]
-  # Kein Build-Command nötig - wir liefern fertige HTML-Dateien
   publish = "."
 
-# Sicherheits-Header
 [[headers]]
   for = "/*"
   [headers.values]
@@ -13,7 +10,6 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
 
-# Schöne 404-Seite (optional - wenn du eine 404.html erstellst)
 [[redirects]]
   from = "/*"
   to = "/index.html"
