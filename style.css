@@ -1,0 +1,193 @@
+/* ===== Grundeinstellungen ===== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --farbe-text: #1a1a1a;
+    --farbe-text-leicht: #555;
+    --farbe-akzent: #2563eb;
+    --farbe-akzent-hover: #1d4ed8;
+    --farbe-hintergrund: #fafafa;
+    --farbe-karte: #ffffff;
+    --farbe-rand: #e5e5e5;
+    --schrift: 'system-ui', '-apple-system', 'Segoe UI', sans-serif;
+    --max-breite: 820px;
+}
+
+body {
+    font-family: var(--schrift);
+    color: var(--farbe-text);
+    background: var(--farbe-hintergrund);
+    line-height: 1.7;
+    font-size: 16px;
+}
+
+a {
+    color: var(--farbe-akzent);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--farbe-akzent-hover);
+}
+
+/* ===== Navigation ===== */
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: var(--max-breite);
+    margin: 0 auto;
+    padding: 1.5rem 2rem;
+}
+
+.logo {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--farbe-text);
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-links a {
+    color: var(--farbe-text-leicht);
+    font-size: 0.9rem;
+}
+
+.nav-links a:hover {
+    color: var(--farbe-text);
+}
+
+/* ===== Hero ===== */
+
+.hero {
+    max-width: var(--max-breite);
+    margin: 0 auto;
+    padding: 6rem 2rem 4rem;
+}
+
+.hero h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: var(--farbe-text-leicht);
+    max-width: 520px;
+    margin-bottom: 2rem;
+}
+
+.cta {
+    display: inline-block;
+    background: var(--farbe-akzent);
+    color: white;
+    padding: 0.75rem 1.75rem;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: background 0.2s;
+}
+
+.cta:hover {
+    background: var(--farbe-akzent-hover);
+    color: white;
+}
+
+/* ===== Sektionen ===== */
+
+.section {
+    max-width: var(--max-breite);
+    margin: 0 auto;
+    padding: 4rem 2rem;
+}
+
+.section h2 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+}
+
+.section p {
+    color: var(--farbe-text-leicht);
+    max-width: 600px;
+}
+
+/* ===== Karten ===== */
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+}
+
+.card {
+    background: var(--farbe-karte);
+    border: 1px solid var(--farbe-rand);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.card h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.card p {
+    font-size: 0.9rem;
+    color: var(--farbe-text-leicht);
+    margin-bottom: 1rem;
+}
+
+.card a {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* ===== Footer ===== */
+
+footer {
+    max-width: var(--max-breite);
+    margin: 0 auto;
+    padding: 3rem 2rem;
+    border-top: 1px solid var(--farbe-rand);
+}
+
+footer p {
+    font-size: 0.85rem;
+    color: var(--farbe-text-leicht);
+}
+
+/* ===== Responsive (Handy) ===== */
+
+@media (max-width: 600px) {
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+
+    .nav-links {
+        gap: 1rem;
+    }
+
+    .card-grid {
+        grid-template-columns: 1fr;
+    }
+}
