@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fintro — Learn Money, For Real</title>
+  <meta name="description" content="Fintro is a financial literacy platform built for teenagers. Learn money through interactive lessons, quizzes, and games." />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── NAV ── */
+    .top-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.9rem 2rem;
+      background: rgba(10,12,16,0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.35rem;
+      text-decoration: none;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+    .nav-logo span { color: var(--amber); }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.2rem;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.4rem 0.85rem;
+      border-radius: 8px;
+      transition: color 0.2s, background 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); background: var(--surface); }
+    .nav-links a.nav-active { color: var(--text); }
+    .nav-links a.nav-cta {
+      background: var(--blue);
+      color: #fff;
+      margin-left: 0.25rem;
+    }
+    .nav-links a.nav-cta:hover { background: var(--blue-dim); }
+
+    /* push content below fixed nav */
+    body { padding-top: 60px; }
+
+    /* unit section divider */
+    .unit-section { margin-top: 2.5rem; }
+    .unit-section + .unit-section { margin-top: 1.5rem; }
+
+    @media (max-width: 600px) {
+      .top-nav { padding: 0.75rem 1rem; }
+      .nav-links .nav-hide { display: none; }
+      body { padding-top: 54px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     TOP NAVIGATION
+════════════════════════════════════════ -->
+<nav class="top-nav">
+  <a class="nav-logo" href="landing.html">fin<span>tro</span></a>
+  <div class="nav-links">
+    <a href="landing.html" class="nav-hide">Home</a>
+    <a href="index.html" class="nav-active nav-hide">Learn</a>
+    <a href="about.html" class="nav-hide">About</a>
+    <a href="landing.html" class="nav-cta">fintro.app ↗</a>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════
+     XP TOAST
+════════════════════════════════════════ -->
+<div class="xp-toast" id="xp-toast">+50 XP 🎉</div>
+
+<!-- ════════════════════════════════════════
+     HOME SCREEN
+════════════════════════════════════════ -->
+<div class="screen active" id="home-screen">
+
+  <header class="home-header">
+    <div class="logo">fin<span>tro</span></div>
+    <div class="xp-bar-wrap">
+      <span class="xp-label">XP</span>
+      <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+      <span class="xp-count" id="xp-count">0 / 1000</span>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>Money is a <em>skill.</em><br>Let's learn it.</h1>
+    <p>Real finance, zero boring. Complete chapters, earn XP, level up.</p>
+  </section>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <span class="val" id="stat-chapters">0</span>
+      <span class="lbl">Chapters Done</span>
+    </div>
+    <div class="stat-card">
+      <span class="val" id="stat-xp">0</span>
+      <span class="lbl">Total XP</span>
+    </div>
+    <div class="stat-card">
+      <span class="val" id="stat-streak">0🔥</span>
+      <span class="lbl">Day Streak</span>
+    </div>
+  </div>
+
+  <!-- Unit 1 -->
+  <div class="unit-section">
+    <p class="unit-label">Unit 1</p>
+    <p class="unit-title">The Foundation — How Money Actually Works</p>
+    <div class="chapter-list" id="chapter-list-1"></div>
+  </div>
+
+  <!-- Unit 2 -->
+  <div class="unit-section">
+    <p class="unit-label">Unit 2</p>
+    <p class="unit-title">Management — Budgeting, Banking & Debt</p>
+    <div class="chapter-list" id="chapter-list-2"></div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════════
+     CHAPTER SCREEN
+════════════════════════════════════════ -->
+<div class="screen" id="chapter-screen">
+
+  <div class="chapter-nav">
+    <button class="btn-back" onclick="goHome()">← Back</button>
+    <span class="chapter-meta" id="ch-meta">UNIT 1 · CHAPTER 1</span>
+  </div>
+
+  <h2 id="ch-title" style="margin-bottom:0.4rem;"></h2>
+  <p id="ch-subtitle" style="margin-bottom:1.5rem;"></p>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('lesson', this)">📖 Lesson</button>
+    <button class="tab-btn" onclick="switchTab('vocab', this)">🔤 Vocab</button>
+    <button class="tab-btn" onclick="switchTab('quiz', this)">✅ Quiz</button>
+    <button class="tab-btn" onclick="switchTab('game', this)">🎮 Game</button>
+  </div>
+
+  <!-- LESSON -->
+  <div class="tab-panel active" id="tab-lesson">
+    <div class="lesson-content" id="lesson-content"></div>
+  </div>
+
+  <!-- VOCAB -->
+  <div class="tab-panel" id="tab-vocab">
+    <div class="vocab-grid" id="vocab-grid"></div>
+    <p class="vocab-hint">Click a card to reveal the definition</p>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="tab-panel" id="tab-quiz">
+    <div class="quiz-wrap" id="quiz-wrap"></div>
+  </div>
+
+  <!-- GAME -->
+  <div class="tab-panel" id="tab-game">
+    <div id="game-container"></div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════════
+     DATA
+════════════════════════════════════════ -->
+<script>
+const CHAPTERS = [
+
+  // ── UNIT 1 ──────────────────────────────
+  {
+    id: 1, unit: 1,
+    title: "What is Money?",
+    subtitle: "From shells to smartphones — the real story of currency",
+    xpReward: 150,
+    lesson: `
+      <h2>What is Money?</h2>
+      <p>Long before money existed, people traded directly — fish for arrows, grain for cloth. This is called <strong>barter</strong>. It worked, but it had a huge problem: you could only trade if both people wanted exactly what the other had.</p>
+      <div class="highlight">💡 This problem is called the "double coincidence of wants." If you have fish but want bread, you need to find someone who has bread AND wants fish — at the same time.</div>
+      <p>Money solved this by becoming a universal middle step. Instead of trading fish for bread directly, you sell fish for money, then buy bread with that money. Simple. Powerful.</p>
+      <p>Over time, money evolved from rare shells and stones to gold coins, paper notes, and today — digital numbers in a bank app. The <em>form</em> changes, but the <em>function</em> stays the same.</p>
+      <h3 style="margin:1.25rem 0 0.5rem">Money has 3 jobs:</h3>
+      <p><strong>1. Medium of Exchange</strong> — It's accepted everywhere for buying things.<br>
+      <strong>2. Store of Value</strong> — You can save it and spend it later.<br>
+      <strong>3. Unit of Account</strong> — It gives everything a price tag, so we can compare value.</p>
+      <div class="highlight">🌍 Today, most money isn't physical at all. About 90% of global money exists only as digital records. When you tap your phone to pay, no coins move — just numbers.</div>
+      <p>Understanding money isn't just about having it. It's about knowing how it works so you can make it work <em>for you</em>.</p>
+    `,
+    vocab: [
+      { term: "Barter", def: "Directly exchanging goods or services without using money. The original trading system — and it had a big flaw." },
+      { term: "Currency", def: "The system of money in use in a country — coins, bills, or digital. It only works because everyone agrees it has value." },
+      { term: "Medium of Exchange", def: "Something accepted by everyone as payment for goods and services. This is money's most important job." },
+      { term: "Store of Value", def: "An asset that holds its worth over time. Money lets you save today and spend tomorrow — unlike fish, which rots." },
+      { term: "Inflation", def: "When prices rise over time, meaning your money buys less than before. A silent tax on savings if you're not careful." },
+    ],
+    quiz: [
+      { q: "What is the main problem with barter?", options: ["It's too slow", "You need double coincidence of wants", "No one wants to trade", "It only works with food"], correct: 1, explain: "Barter requires both people to want exactly what the other has — at the same time. Very hard to arrange!" },
+      { q: "Which of these is NOT a function of money?", options: ["Medium of exchange", "Store of value", "Source of happiness", "Unit of account"], correct: 2, explain: "Money has 3 official functions: medium of exchange, store of value, and unit of account. Happiness isn't one of them (unfortunately)." },
+      { q: "About what percentage of global money exists only digitally?", options: ["10%", "40%", "70%", "90%"], correct: 3, explain: "Around 90% of global money is digital — just numbers in computer systems. Physical cash is actually the minority." },
+      { q: "If prices keep rising and your salary stays the same, what happens to your purchasing power?", options: ["It stays the same", "It increases", "It decreases", "It doubles"], correct: 2, explain: "This is inflation. When prices rise but your income doesn't, your money buys less. Your purchasing power shrinks." },
+      { q: "A 'unit of account' means money is used to...", options: ["Count your friends", "Give everything a price so values can be compared", "Open bank accounts", "Pay taxes"], correct: 1, explain: "Unit of account means money gives us a common language for value. Without it, how would you compare a haircut to a pizza?" },
+    ],
+    game: "barter"
+  },
+
+  {
+    id: 2, unit: 1,
+    title: "Compound Interest",
+    subtitle: "The quiet force that builds — or destroys — your wealth",
+    xpReward: 150,
+    lesson: `
+      <h2>Compound Interest</h2>
+      <p>Albert Einstein reportedly called compound interest the "eighth wonder of the world." Whether he really said it or not — the math is undeniably powerful.</p>
+      <p>Here's the difference in one sentence: <strong>simple interest</strong> pays you on your original amount only. <strong>Compound interest</strong> pays you on your original amount <em>plus</em> all the interest you've already earned.</p>
+      <div class="highlight">📐 The formula: A = P × (1 + r/n)^(n×t)<br>P = principal, r = annual rate, n = compounds per year, t = years</div>
+      <p>Let's make it real. You invest $1,000 at 8% per year:</p>
+      <p>After 10 years: <strong>$2,159</strong><br>After 20 years: <strong>$4,661</strong><br>After 30 years: <strong>$10,063</strong></p>
+      <p>Notice: the growth isn't equal. The <em>longer</em> you wait, the <em>faster</em> it grows. That's the snowball effect — your interest earns interest, which earns more interest.</p>
+      <div class="highlight">⚠️ The same math works against you with debt. Credit card interest of 20% compounds too — and it grows just as aggressively.</div>
+      <p>The #1 lesson from compound interest: <strong>start early</strong>. Investing $100/month starting at 17 produces dramatically more wealth than starting at 27, even if you invest more money later. Time is the real ingredient.</p>
+    `,
+    vocab: [
+      { term: "Principal", def: "The original amount of money saved or invested, before any interest. This is your starting point." },
+      { term: "Interest Rate", def: "The percentage of the principal charged or paid per year. A 7% rate on $1,000 means $70 per year in simple terms." },
+      { term: "Compound Interest", def: "Interest earned on both the principal AND the accumulated interest. This creates exponential — not linear — growth." },
+      { term: "Simple Interest", def: "Interest calculated only on the original principal. $1,000 at 10% always earns $100/year, nothing more." },
+      { term: "Time Value of Money", def: "The concept that money now is worth more than the same amount later — because money now can be invested and grow." },
+    ],
+    quiz: [
+      { q: "What makes compound interest different from simple interest?", options: ["It's faster to calculate", "It earns interest on interest", "It only applies to loans", "It's always lower"], correct: 1, explain: "Compound interest earns interest on your accumulated interest, not just the principal. This creates exponential growth." },
+      { q: "You invest $500 at 10% simple interest for 2 years. How much interest do you earn?", options: ["$50", "$100", "$105", "$110"], correct: 1, explain: "$500 × 10% = $50/year. Over 2 years = $100. Simple interest is just: principal × rate × time." },
+      { q: "Why is starting to invest early so important with compound interest?", options: ["Rates are higher when young", "Time multiplies the compounding effect", "It's legally required", "Inflation doesn't apply"], correct: 1, explain: "Every extra year of compounding adds a multiplied layer of growth. Time is the most powerful variable in the equation." },
+      { q: "Compound interest can HURT you when...", options: ["You have savings", "You have a high-interest debt", "Interest rates are low", "You invest in stocks"], correct: 1, explain: "Credit card debt at 20%+ compounds against you. The same power that grows savings can grow debt just as fast." },
+      { q: "What does 'compounding frequency' mean?", options: ["How often you check your balance", "How often interest is calculated and added to your account", "The number of bank accounts you have", "Your monthly savings rate"], correct: 1, explain: "Compounding frequency is how often interest is added — daily, monthly, or yearly. More frequent = slightly more growth." },
+    ],
+    game: "timemachine"
+  },
+
+  {
+    id: 3, unit: 1,
+    title: "Income & Earning",
+    subtitle: "Where money comes from — and how to get more of it",
+    xpReward: 200,
+    lesson: `
+      <h2>Income & Earning</h2>
+      <p>Before you can save, invest, or spend wisely — you need income. But most people think of income only as a paycheck. The reality is far more interesting.</p>
+      <p><strong>Active income</strong> is money you earn by exchanging your time. A job, freelancing, tutoring — you stop working, the money stops. It's how most people start, and that's fine.</p>
+      <div class="highlight">💼 90% of people rely almost entirely on active income. That's not bad — but it creates a ceiling on how much you can earn, because you only have 24 hours in a day.</div>
+      <p><strong>Passive income</strong> is money that flows without you actively trading time for it. Rental income, dividends from stocks, royalties from a book, revenue from an app — these can pay you while you sleep.</p>
+      <p>Building passive income takes upfront work or capital. It's not magic. But over time, it can compound just like interest does.</p>
+      <h3 style="margin:1.25rem 0 0.5rem">How to increase your income:</h3>
+      <p><strong>1. Build skills</strong> — More valuable skills = higher pay ceiling.<br>
+      <strong>2. Negotiate</strong> — Most people never ask for more. The ones who do, often get it.<br>
+      <strong>3. Diversify</strong> — Side projects, freelance work, or investing can add streams.<br>
+      <strong>4. Think long term</strong> — Education and skills compound over decades.</p>
+      <div class="highlight">📊 Gross income = what you earn before taxes. Net income (take-home pay) = what's left after taxes and deductions. Always budget from your net income.</div>
+      <p>Understanding income types changes how you think about work — not just as something you do, but as a system you can design.</p>
+    `,
+    vocab: [
+      { term: "Active Income", def: "Money earned directly from working — it stops when you stop. Jobs, freelancing, and tutoring are all active income." },
+      { term: "Passive Income", def: "Money earned with minimal ongoing effort. Rent, dividends, royalties — it flows even when you're asleep." },
+      { term: "Gross Income", def: "Total earnings before any taxes or deductions. The number on your contract — not the number in your bank account." },
+      { term: "Net Income", def: "Take-home pay after taxes and deductions. This is your real number — always budget from this, not gross." },
+      { term: "Diversification", def: "Spreading income (or investments) across multiple sources. If one stream dries up, others keep flowing." },
+    ],
+    quiz: [
+      { q: "What is active income?", options: ["Money from investments", "Money earned by trading time for work", "Rental profits", "Lottery winnings"], correct: 1, explain: "Active income is directly tied to your time and effort. When you stop working, it stops coming in." },
+      { q: "If you earn $3,000/month but pay $800 in taxes, what is your net income?", options: ["$3,000", "$2,200", "$800", "$3,800"], correct: 1, explain: "$3,000 - $800 = $2,200. Net income is what you actually take home. Always budget from this number." },
+      { q: "Which is an example of passive income?", options: ["Waiting tables", "Working a 9-5", "Receiving rent from a property", "Teaching piano lessons"], correct: 2, explain: "Rental income continues whether you're working or not — that's the key feature of passive income." },
+      { q: "Why is diversifying income sources important?", options: ["It's legally required", "It reduces risk if one source disappears", "It always earns more", "Banks require it"], correct: 1, explain: "If your only income stream disappears (job loss, injury), diversification means you still have other sources flowing." },
+      { q: "What's the most important reason to know the difference between gross and net income?", options: ["To impress your employer", "So you budget from what you actually receive", "To calculate passive income", "Banks require it"], correct: 1, explain: "Many people budget from gross income and are confused why they can't make it work. Net income is your real number." },
+    ],
+    game: "incomestreams"
+  },
+
+  // ── UNIT 2 ──────────────────────────────
+  {
+    id: 4, unit: 2,
+    title: "Budgeting",
+    subtitle: "Tell your money where to go — before it disappears",
+    xpReward: 200,
+    lesson: `
+      <h2>Budgeting</h2>
+      <p>A budget isn't a restriction — it's a plan. Most people who "can't afford things" don't have an income problem. They have a tracking problem. They don't know where their money is going.</p>
+      <p>The most famous budgeting rule is the <strong>50/30/20 rule</strong>:</p>
+      <p><strong>50% Needs</strong> — rent, food, transport, utilities. The things you must pay.<br>
+      <strong>30% Wants</strong> — dining out, subscriptions, hobbies. Nice to have, but optional.<br>
+      <strong>20% Savings & Investing</strong> — your future self's money. Pay yourself first.</p>
+      <div class="highlight">💡 "Pay yourself first" means moving money to savings before you spend on anything else. Automate it so you never have to decide.</div>
+      <p>Another popular method is <strong>zero-based budgeting</strong> — every euro/dollar gets a job. You assign your entire income to categories until nothing is left unassigned. Income minus all allocations = zero.</p>
+      <p>The most important budget principle: <strong>track everything for one month</strong>. Most people are shocked by what they discover. Coffee, apps, impulse buys — the small stuff adds up brutally fast.</p>
+      <div class="highlight">📱 You don't need an app. A simple spreadsheet — or even paper — works perfectly. The tool doesn't matter; the habit does.</div>
+      <p>A budget also reveals something powerful: the gap between what you earn and what you need. That gap is your opportunity — to save, to invest, to build something.</p>
+    `,
+    vocab: [
+      { term: "Budget", def: "A plan for how you'll spend and save your money over a set period. A budget doesn't limit freedom — it creates it." },
+      { term: "50/30/20 Rule", def: "A simple budgeting framework: 50% to needs, 30% to wants, 20% to savings and investing." },
+      { term: "Fixed Expenses", def: "Costs that stay the same each month — rent, insurance, subscriptions. Easy to plan for because they don't change." },
+      { term: "Variable Expenses", def: "Costs that change month to month — food, entertainment, clothing. These are where most people overspend without realizing." },
+      { term: "Pay Yourself First", def: "Moving money to savings before spending on anything else. Treating savings like a non-negotiable bill." },
+    ],
+    quiz: [
+      { q: "In the 50/30/20 rule, what does the 20% represent?", options: ["Food and transport", "Entertainment", "Savings and investing", "Rent"], correct: 2, explain: "The 20% is your financial future — savings and investments. It's the most important slice, even if it feels hardest to commit to." },
+      { q: "What is 'zero-based budgeting'?", options: ["Having zero money left in your account", "Assigning every dollar a job until nothing is unallocated", "Saving nothing", "Only spending on necessities"], correct: 1, explain: "Zero-based budgeting means your income minus all your planned allocations equals zero. Every dollar has a purpose." },
+      { q: "Which of these is a variable expense?", options: ["Monthly rent", "Car insurance payment", "Grocery shopping", "Netflix subscription"], correct: 2, explain: "Groceries change each month depending on what you buy. Rent and subscriptions are fixed — they're the same every month." },
+      { q: "What does 'pay yourself first' mean?", options: ["Buy yourself a treat first", "Save money before spending on anything else", "Invest before paying rent", "Negotiate a higher salary"], correct: 1, explain: "It means treating savings like a bill — move the money out automatically before you have a chance to spend it." },
+      { q: "Why should you track your spending for at least one month?", options: ["Your bank requires it", "To discover where your money actually goes", "To qualify for a loan", "To calculate taxes"], correct: 1, explain: "Most people are shocked by what they find. Small daily purchases add up to hundreds per month — but you can't fix what you can't see." },
+    ],
+    game: "budgetplanner"
+  },
+
+  {
+    id: 5, unit: 2,
+    title: "Banking & Accounts",
+    subtitle: "How banks work — and how to use them to your advantage",
+    xpReward: 200,
+    lesson: `
+      <h2>Banking & Accounts</h2>
+      <p>Banks aren't just safe places to store money. Understanding how they actually work changes how you use them — and how much you earn (or lose) in the process.</p>
+      <p>The basic model: banks take deposits from people, pay them a small interest rate, then lend that money out to other people at a higher rate. The difference is the bank's profit. You're a supplier in that system.</p>
+      <h3 style="margin:1.25rem 0 0.5rem">The main account types:</h3>
+      <p><strong>Current / Checking Account</strong> — Your everyday money. Pay bills, make purchases, receive your salary. Usually earns no interest. Keep only what you need here.</p>
+      <p><strong>Savings Account</strong> — For money you're not spending right now. Earns interest. In Switzerland, this is often called a Sparkonto. Rates vary wildly — shop around.</p>
+      <p><strong>Fixed-Term Deposit (Festgeld)</strong> — You lock money away for a set period (3 months, 1 year, etc.) in exchange for a higher interest rate. Can't touch it until the term ends.</p>
+      <div class="highlight">🏦 In Switzerland, deposits up to CHF 100,000 per bank are protected by the government deposit guarantee (Einlagensicherung). If a bank fails, you get your money back up to that limit.</div>
+      <p>Interest rates matter more than people think. CHF 10,000 at 0.1% earns you CHF 10 per year. At 2%, that's CHF 200. Same money — very different results. Always compare.</p>
+      <div class="highlight">⚡ Digital banks (like Neon or Yuh in Switzerland) often offer better rates and lower fees than traditional banks. Don't be loyal to a bank that doesn't reward loyalty.</div>
+    `,
+    vocab: [
+      { term: "Current Account", def: "Your everyday spending account. Money in, money out. Usually earns no interest — it's a tool, not a savings vehicle." },
+      { term: "Savings Account", def: "An account that earns interest on your balance. Keep money here that you won't need for a few months." },
+      { term: "Interest Rate", def: "The percentage a bank pays you (on savings) or charges you (on loans) per year. Compare rates — they differ enormously." },
+      { term: "Deposit Guarantee", def: "Government protection for bank deposits up to a certain amount. In Switzerland, CHF 100,000 per bank is guaranteed." },
+      { term: "Fixed-Term Deposit", def: "A savings product where you lock money away for a set period (e.g. 1 year) in exchange for a higher interest rate." },
+    ],
+    quiz: [
+      { q: "How do banks make money?", options: ["By charging monthly fees only", "By borrowing at a low rate and lending at a higher rate", "Government funding", "Stock market investments"], correct: 1, explain: "Banks pay you a small rate on deposits, then lend that money out at a higher rate. The spread is their profit." },
+      { q: "Which account type is best for everyday spending?", options: ["Fixed-term deposit", "Savings account", "Current/checking account", "Investment account"], correct: 2, explain: "A current account is designed for daily transactions — salary arrives here, bills get paid from here." },
+      { q: "In Switzerland, how much per bank is protected by the deposit guarantee?", options: ["CHF 10,000", "CHF 50,000", "CHF 100,000", "Unlimited"], correct: 2, explain: "The Swiss deposit guarantee (Einlagensicherung) protects up to CHF 100,000 per bank. Split large amounts across banks for more protection." },
+      { q: "What's the main advantage of a fixed-term deposit over a savings account?", options: ["You can withdraw anytime", "It's protected by insurance", "It typically offers a higher interest rate", "No minimum balance required"], correct: 2, explain: "You give up flexibility (can't withdraw early) in exchange for a better rate. Good for money you definitely won't need soon." },
+      { q: "CHF 20,000 at 0.5% interest per year earns how much annually?", options: ["CHF 5", "CHF 50", "CHF 100", "CHF 1,000"], correct: 2, explain: "CHF 20,000 × 0.5% = CHF 100 per year. Small percentages on large amounts can still add up — but compare rates aggressively." },
+    ],
+    game: "bankingmatch"
+  },
+
+  {
+    id: 6, unit: 2,
+    title: "Debt & Credit Cards",
+    subtitle: "When borrowing makes sense — and when it destroys you",
+    xpReward: 250,
+    lesson: `
+      <h2>Debt & Credit Cards</h2>
+      <p>Debt has a terrible reputation. But the truth is more nuanced: <strong>not all debt is equal</strong>. The question isn't "is debt good or bad?" — it's "what is this debt costing me, and what am I getting for it?"</p>
+      <p><strong>Good debt</strong> is borrowing that creates value or builds wealth. A student loan that leads to a higher income. A mortgage on a property that appreciates. The cost of borrowing is outweighed by the gain.</p>
+      <p><strong>Bad debt</strong> is borrowing to fund consumption — things you eat, wear, or use up. Credit card debt to pay for holidays or gadgets. The item is gone, but the debt (and interest) stays.</p>
+      <div class="highlight">💳 Credit cards aren't evil — but they're designed to make you pay as little as possible each month, for as long as possible. A CHF 1,000 debt at 15% interest, paying only the minimum, can take 7+ years to clear and cost you hundreds extra.</div>
+      <p>The key credit card rule: <strong>pay the full balance every month</strong>. If you can't, don't buy it. Used this way, credit cards give you purchase protection, points, and a grace period — all for free.</p>
+      <h3 style="margin:1.25rem 0 0.5rem">The debt avalanche method:</h3>
+      <p>List all your debts. Pay minimum on all of them. Then throw every extra franc at the one with the <strong>highest interest rate</strong> first. Once it's gone, attack the next. This saves the most money mathematically.</p>
+      <div class="highlight">🏔️ The debt snowball method (pay smallest debt first instead) is less efficient mathematically, but gives quicker psychological wins. Both work — pick the one you'll actually stick to.</div>
+    `,
+    vocab: [
+      { term: "Good Debt", def: "Borrowing that creates value or builds wealth over time — like a mortgage or student loan that leads to higher earnings." },
+      { term: "Bad Debt", def: "Borrowing to fund consumption — things that are gone before the debt is paid. High-interest credit card debt is the clearest example." },
+      { term: "APR", def: "Annual Percentage Rate — the yearly cost of borrowing including fees and interest. The number to compare when choosing any loan or card." },
+      { term: "Minimum Payment", def: "The smallest amount a lender requires you to pay each month. Paying only this keeps you in debt for years and costs a fortune in interest." },
+      { term: "Debt Avalanche", def: "A repayment strategy: pay minimums on all debts, then attack the highest-interest debt first. Mathematically optimal." },
+    ],
+    quiz: [
+      { q: "What makes debt 'good' vs 'bad'?", options: ["The size of the loan", "Whether it creates value that outweighs its cost", "The lender's reputation", "Whether it's from a bank"], correct: 1, explain: "Good debt creates value (education, property, business). Bad debt funds consumption — the item is gone but the debt remains." },
+      { q: "What is the smartest way to use a credit card?", options: ["Pay only the minimum each month", "Never use one", "Pay the full balance every month", "Use it for everything and never check the bill"], correct: 2, explain: "Paid in full each month, a credit card costs nothing and gives you protection and rewards. Carry a balance and it becomes very expensive." },
+      { q: "What does APR stand for?", options: ["Annual Payment Rate", "Average Personal Return", "Annual Percentage Rate", "Automated Payment Request"], correct: 2, explain: "APR is the yearly cost of borrowing, including interest and fees. Always compare APRs when choosing between loans or cards." },
+      { q: "In the debt avalanche method, which debt do you attack first?", options: ["The largest debt", "The smallest debt", "The oldest debt", "The highest interest rate debt"], correct: 3, explain: "The avalanche targets the highest-interest debt first, which minimizes total interest paid over time. Mathematically the best approach." },
+      { q: "You have a CHF 500 credit card debt at 20% APR. You only pay the minimum. What happens?", options: ["It disappears in 6 months", "You pay it off quickly with small fees", "It takes much longer than expected and costs significantly more", "The bank forgives part of it"], correct: 2, explain: "At 20% APR paying minimums, you could be paying for years and end up paying hundreds more than you originally borrowed." },
+    ],
+    game: "debtavalanche"
+  },
+
+  {
+    id: 7, unit: 2,
+    title: "Emergency Funds",
+    subtitle: "The financial safety net everyone needs — and almost nobody has",
+    xpReward: 200,
+    lesson: `
+      <h2>Emergency Funds</h2>
+      <p>Here's a question: if you lost your job tomorrow, how long could you survive financially without borrowing money or asking for help?</p>
+      <p>For most people, the honest answer is uncomfortable. An emergency fund is the solution — a dedicated pot of money set aside exclusively for genuine financial emergencies.</p>
+      <p><strong>What counts as an emergency:</strong> Job loss. Medical bill. Car breakdown you need to get to work. Unexpected home repair. These are real, unpredictable, and urgent.</p>
+      <p><strong>What doesn't count:</strong> A sale on something you want. A holiday because you're tired. An upgrade you've been putting off. Those are wants, not emergencies.</p>
+      <div class="highlight">🎯 The standard advice: save 3–6 months of living expenses. If your monthly expenses are CHF 2,000, your target is CHF 6,000–12,000. Start with CHF 1,000 as a first milestone.</div>
+      <p>Where to keep it: a <strong>separate savings account</strong> that's easy to access but not so easy that you dip into it. Not invested in stocks — you can't afford to have it drop 30% right when you need it most.</p>
+      <p>The psychological effect is underrated. Knowing you have a buffer changes how you feel about your job, your decisions, and your risk tolerance. It gives you options.</p>
+      <div class="highlight">💪 An emergency fund isn't just financial security — it's confidence. "I can walk away from a bad situation" is only possible when you have money behind you.</div>
+    `,
+    vocab: [
+      { term: "Emergency Fund", def: "A dedicated savings reserve for genuine, unexpected financial emergencies. Not for wants — only for real crises." },
+      { term: "Liquid Asset", def: "Something that can be converted to cash quickly without losing value. Cash and savings accounts are liquid; property is not." },
+      { term: "3-6 Month Rule", def: "The standard guideline: save enough to cover 3 to 6 months of your essential living expenses." },
+      { term: "Financial Buffer", def: "A cushion between you and financial disaster. An emergency fund is the most important buffer you can build." },
+      { term: "Opportunity Cost", def: "What you give up by choosing one option over another. Keeping your emergency fund in cash means missing investment returns — but that's the right trade-off." },
+    ],
+    quiz: [
+      { q: "What is the primary purpose of an emergency fund?", options: ["To invest in the stock market", "To cover unexpected essential expenses", "To pay for holidays", "To build long-term wealth"], correct: 1, explain: "Emergency funds are a buffer against genuine crises: job loss, medical bills, urgent repairs. Not for planned or optional expenses." },
+      { q: "What is the standard recommendation for how large an emergency fund should be?", options: ["1 week of expenses", "1 month of expenses", "3–6 months of expenses", "1 year of expenses"], correct: 2, explain: "3–6 months covers most realistic emergencies. Less feels tight; more can be better invested." },
+      { q: "Where should you keep your emergency fund?", options: ["Invested in stocks", "In an accessible savings account", "In cash under your mattress", "In cryptocurrency"], correct: 1, explain: "A savings account is liquid and safe. Stocks can drop 30% right when you need the money — terrible timing. Cash under a mattress earns nothing and can be stolen." },
+      { q: "Which of these IS a legitimate emergency fund use?", options: ["A new phone because yours is old", "Concert tickets", "Car repair needed to get to work", "A gym membership deal"], correct: 2, explain: "If your car breaks down and you need it for work, that's a genuine emergency. Optional upgrades and entertainment are not." },
+      { q: "Beyond financial security, what does having an emergency fund give you?", options: ["Higher credit score automatically", "Tax benefits", "Confidence and more options in life", "Free banking services"], correct: 2, explain: "Knowing you have a buffer changes your psychology. You can leave a bad job, say no to bad deals, and take risks you couldn't otherwise afford." },
+    ],
+    game: "emergencyfund"
+  },
+];
+
+// ════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════
+let state = JSON.parse(localStorage.getItem('fintro_state') || 'null') || {
+  xp: 0,
+  completedChapters: [],
+  streak: 1,
+};
+
+let currentChapter = null;
+let currentTab = 'lesson';
+let quizState = { index: 0, score: 0, answered: false, done: false };
+
+function saveState() {
+  localStorage.setItem('fintro_state', JSON.stringify(state));
+}
+
+// ════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function goHome() {
+  showScreen('home-screen');
+  renderHome();
+}
+
+function openChapter(chapterId) {
+  const ch = CHAPTERS.find(c => c.id === chapterId);
+  if (!ch) return;
+
+  currentChapter = ch;
+  quizState = { index: 0, score: 0, answered: false, done: false };
+
+  document.getElementById('ch-meta').textContent = `UNIT ${ch.unit} · CHAPTER ${ch.id}`;
+  document.getElementById('ch-title').textContent = ch.title;
+  document.getElementById('ch-subtitle').textContent = ch.subtitle;
+
+  switchTab('lesson', document.querySelector('.tab-btn'));
+  renderLesson();
+  showScreen('chapter-screen');
+}
+
+// ════════════════════════════════════════
+// HOME RENDER
+// ════════════════════════════════════════
+function renderHome() {
+  const maxXP = 1000;
+  const pct = Math.min((state.xp / maxXP) * 100, 100);
+  document.getElementById('xp-fill').style.width = pct + '%';
+  document.getElementById('xp-count').textContent = `${state.xp} / ${maxXP}`;
+
+  document.getElementById('stat-chapters').textContent = state.completedChapters.length;
+  document.getElementById('stat-xp').textContent = state.xp;
+  document.getElementById('stat-streak').textContent = state.streak + '🔥';
+
+  renderChapterList(1, 'chapter-list-1');
+  renderChapterList(2, 'chapter-list-2');
+}
+
+function renderChapterList(unit, containerId) {
+  const list = document.getElementById(containerId);
+  list.innerHTML = '';
+  const unitChapters = CHAPTERS.filter(c => c.unit === unit);
+
+  unitChapters.forEach(ch => {
+    const isCompleted = state.completedChapters.includes(ch.id);
+
+    const row = document.createElement('div');
+    row.className = `chapter-row${isCompleted ? ' completed' : ''}`;
+    row.onclick = () => openChapter(ch.id);
+
+    const badge = isCompleted
+      ? `<span class="ch-badge done">✓ Done</span>`
+      : `<span class="ch-badge active">▶ Start</span>`;
+
+    row.innerHTML = `
+      <span class="ch-num">0${ch.id}</span>
+      <div class="ch-info">
+        <div class="ch-title">${ch.title}</div>
+        <div class="ch-sub">${ch.subtitle}</div>
+      </div>
+      <span class="ch-xp" style="font-size:0.75rem;color:var(--amber);font-weight:700;white-space:nowrap;">+${ch.xpReward} XP</span>
+      ${badge}
+    `;
+    list.appendChild(row);
+  });
+}
+
+// ════════════════════════════════════════
+// TAB SWITCHING
+// ════════════════════════════════════════
+function switchTab(name, btn) {
+  currentTab = name;
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+
+  if (name === 'lesson') renderLesson();
+  if (name === 'vocab')  renderVocab();
+  if (name === 'quiz')   renderQuiz();
+  if (name === 'game')   renderGame();
+}
+
+// ════════════════════════════════════════
+// LESSON
+// ════════════════════════════════════════
+function renderLesson() {
+  document.getElementById('lesson-content').innerHTML = currentChapter.lesson;
+}
+
+// ════════════════════════════════════════
+// VOCAB
+// ════════════════════════════════════════
+function renderVocab() {
+  const grid = document.getElementById('vocab-grid');
+  grid.innerHTML = '';
+  currentChapter.vocab.forEach(v => {
+    const card = document.createElement('div');
+    card.className = 'vocab-card';
+    card.innerHTML = `<div class="term">${v.term}</div><div class="def" style="display:none">${v.def}</div>`;
+    card.onclick = () => {
+      const def = card.querySelector('.def');
+      const isHidden = def.style.display === 'none';
+      def.style.display = isHidden ? 'block' : 'none';
+      card.style.borderColor = isHidden ? 'var(--amber)' : '';
+    };
+    grid.appendChild(card);
+  });
+}
+
+// ════════════════════════════════════════
+// QUIZ
+// ════════════════════════════════════════
+function renderQuiz() {
+  const wrap = document.getElementById('quiz-wrap');
+  const qs = currentChapter.quiz;
+
+  if (quizState.done) {
+    const pct = Math.round((quizState.score / qs.length) * 100);
+    wrap.innerHTML = `
+      <div class="quiz-result">
+        <span class="score-big">${quizState.score}/${qs.length}</span>
+        <h3 style="margin-bottom:0.5rem">${pct >= 80 ? '🎉 Great work!' : pct >= 60 ? '👍 Good effort!' : '💪 Keep practicing!'}</h3>
+        <p>${pct >= 80 ? 'You really understand this chapter.' : 'Review the lesson and try again!'}</p>
+        <button class="btn-primary" onclick="unlockAfterQuiz()">Continue to Game →</button>
+        ${pct < 80 ? `<br><br><button class="btn-primary" onclick="resetQuiz()" style="background:var(--surface2);color:var(--text);margin-top:0.5rem">Retry Quiz</button>` : ''}
+      </div>`;
+    return;
+  }
+
+  const q = qs[quizState.index];
+
+  let dots = '';
+  qs.forEach((_, i) => {
+    const cls = i < quizState.index ? 'done' : i === quizState.index ? 'current' : '';
+    dots += `<div class="quiz-dot ${cls}"></div>`;
+  });
+
+  wrap.innerHTML = `
+    <div class="quiz-progress">
+      <div class="quiz-dots">${dots}</div>
+      <span style="font-size:0.8rem;color:var(--muted)">${quizState.index + 1} of ${qs.length}</span>
+    </div>
+    <div class="quiz-question-box">
+      <div class="quiz-q-num">QUESTION ${quizState.index + 1}</div>
+      <div class="quiz-q-text">${q.q}</div>
+    </div>
+    <div class="quiz-options" id="quiz-options">
+      ${q.options.map((o, i) => `<button class="quiz-option" onclick="answerQuiz(${i})">${o}</button>`).join('')}
+    </div>
+    <div id="quiz-feedback"></div>
+    <button class="btn-primary" id="quiz-next" style="display:none" onclick="nextQuestion()">Next →</button>
+  `;
+}
+
+function answerQuiz(idx) {
+  if (quizState.answered) return;
+  quizState.answered = true;
+
+  const q = currentChapter.quiz[quizState.index];
+  const opts = document.querySelectorAll('.quiz-option');
+  opts.forEach(o => o.disabled = true);
+  opts[idx].classList.add(idx === q.correct ? 'correct' : 'wrong');
+  opts[q.correct].classList.add('correct');
+
+  const fb = document.getElementById('quiz-feedback');
+  const correct = idx === q.correct;
+  if (correct) quizState.score++;
+  fb.className = `quiz-feedback ${correct ? 'correct' : 'wrong'}`;
+  fb.innerHTML = `${correct ? '✓ Correct!' : '✗ Not quite.'} ${q.explain}`;
+
+  document.getElementById('quiz-next').style.display = 'block';
+}
+
+function nextQuestion() {
+  quizState.index++;
+  quizState.answered = false;
+  if (quizState.index >= currentChapter.quiz.length) {
+    quizState.done = true;
+    if (!state.completedChapters.includes(currentChapter.id)) {
+      state.completedChapters.push(currentChapter.id);
+    }
+    awardXP(currentChapter.xpReward);
+  }
+  renderQuiz();
+}
+
+function resetQuiz() {
+  quizState = { index: 0, score: 0, answered: false, done: false };
+  renderQuiz();
+}
+
+function unlockAfterQuiz() {
+  switchTab('game', document.querySelectorAll('.tab-btn')[3]);
+}
+
+// ════════════════════════════════════════
+// XP
+// ════════════════════════════════════════
+function awardXP(amount) {
+  state.xp += amount;
+  saveState();
+  const toast = document.getElementById('xp-toast');
+  toast.textContent = `+${amount} XP 🎉`;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+// ════════════════════════════════════════
+// GAMES
+// ════════════════════════════════════════
+function renderGame() {
+  const c = document.getElementById('game-container');
+  const g = currentChapter.game;
+  if (g === 'barter')        { c.innerHTML = barterGameHTML(); }
+  if (g === 'timemachine')   { c.innerHTML = timeMachineHTML(); initTimeMachine(); }
+  if (g === 'incomestreams') { c.innerHTML = incomeStreamsHTML(); initIncomeStreams(); }
+  if (g === 'budgetplanner') { c.innerHTML = budgetPlannerHTML(); initBudgetPlanner(); }
+  if (g === 'bankingmatch')  { c.innerHTML = bankingMatchHTML(); initBankingMatch(); }
+  if (g === 'debtavalanche') { c.innerHTML = debtAvalancheHTML(); initDebtAvalanche(); }
+  if (g === 'emergencyfund') { c.innerHTML = emergencyFundHTML(); initEmergencyFund(); }
+}
+
+// ─── GAME 1: Barter Market ───────────────
+const BARTER_ITEMS = {
+  alice: [
+    { name: "🐟 Fish (x5)", value: 5 },
+    { name: "🌾 Grain (bag)", value: 8 },
+    { name: "🪵 Wood (plank)", value: 4 },
+  ],
+  bob: [
+    { name: "🍞 Bread (loaf)", value: 6 },
+    { name: "🏹 Arrows (x10)", value: 7 },
+    { name: "🧣 Wool cloth", value: 9 },
+  ],
+};
+let barterSelected = { alice: null, bob: null };
+let barterScore = 0;
+
+function barterGameHTML() {
+  return `
+    <div class="game-wrap">
+      <div class="game-title">🏪 Barter Market</div>
+      <div class="game-desc">Pick one item from Alice and one from Bob. If their values are close (within 2 points), the trade succeeds! See how hard bartering really is.</div>
+      <div class="game-score">🪙 Successful trades: <span id="barter-score">0</span></div>
+      <div class="barter-board">
+        <div class="barter-col">
+          <h4>Alice has</h4>
+          ${BARTER_ITEMS.alice.map((it, i) => `<div class="barter-item" id="alice-${i}" onclick="selectBarter('alice',${i})">${it.name} <small style="color:var(--muted)">(val: ${it.value})</small></div>`).join('')}
+        </div>
+        <div class="barter-arrow">vs</div>
+        <div class="barter-col">
+          <h4>Bob has</h4>
+          ${BARTER_ITEMS.bob.map((it, i) => `<div class="barter-item" id="bob-${i}" onclick="selectBarter('bob',${i})">${it.name} <small style="color:var(--muted)">(val: ${it.value})</small></div>`).join('')}
+        </div>
+      </div>
+      <div class="barter-log" id="barter-log">Select one item from each side to attempt a trade...</div>
+      <button class="btn-primary" onclick="attemptTrade()" style="margin-top:0.75rem">Attempt Trade</button>
+    </div>`;
+}
+
+function selectBarter(who, idx) {
+  barterSelected[who] = idx;
+  BARTER_ITEMS.alice.forEach((_, i) => {
+    const el = document.getElementById(`alice-${i}`);
+    if (el) el.classList.toggle('selected', barterSelected.alice === i);
+  });
+  BARTER_ITEMS.bob.forEach((_, i) => {
+    const el = document.getElementById(`bob-${i}`);
+    if (el) el.classList.toggle('selected', barterSelected.bob === i);
+  });
+}
+
+function attemptTrade() {
+  const log = document.getElementById('barter-log');
+  if (barterSelected.alice === null || barterSelected.bob === null) {
+    log.textContent = 'Select one item from each side first!';
+    return;
+  }
+  const a = BARTER_ITEMS.alice[barterSelected.alice];
+  const b = BARTER_ITEMS.bob[barterSelected.bob];
+  const diff = Math.abs(a.value - b.value);
+  if (diff <= 2) {
+    barterScore++;
+    document.getElementById('barter-score').textContent = barterScore;
+    log.innerHTML = `Trade successful! ${a.name} vs ${b.name} (values: ${a.value} vs ${b.value}). Close enough!`;
+  } else {
+    log.innerHTML = `Trade failed. ${a.name} (val: ${a.value}) vs ${b.name} (val: ${b.value}) — too far apart.`;
+  }
+  barterSelected = { alice: null, bob: null };
+  document.querySelectorAll('.barter-item').forEach(el => el.classList.remove('selected'));
+}
+
+// ─── GAME 2: Time Machine ────────────────
+function timeMachineHTML() {
+  return `
+    <div class="game-wrap">
+      <div class="game-title">Time Machine</div>
+      <div class="game-desc">Drag the sliders to see how compound interest grows your money over time.</div>
+      <div class="tm-controls">
+        <div class="tm-control">
+          <label>Starting amount: <span class="tm-val" id="tm-principal-val">$1,000</span></label>
+          <input type="range" id="tm-principal" min="100" max="10000" step="100" value="1000" oninput="updateTM()">
+        </div>
+        <div class="tm-control">
+          <label>Annual interest rate: <span class="tm-val" id="tm-rate-val">7%</span></label>
+          <input type="range" id="tm-rate" min="1" max="20" step="1" value="7" oninput="updateTM()">
+        </div>
+        <div class="tm-control">
+          <label>Years: <span class="tm-val" id="tm-years-val">20</span></label>
+          <input type="range" id="tm-years" min="1" max="50" step="1" value="20" oninput="updateTM()">
+        </div>
+        <div class="tm-control">
+          <label>Monthly contribution: <span class="tm-val" id="tm-contrib-val">$50</span></label>
+          <input type="range" id="tm-contrib" min="0" max="500" step="10" value="50" oninput="updateTM()">
+        </div>
+      </div>
+      <canvas class="tm-chart" id="tm-canvas"></canvas>
+      <div class="tm-summary" id="tm-summary"></div>
+    </div>`;
+}
+
+function initTimeMachine() { updateTM(); }
+
+function updateTM() {
+  const P = +document.getElementById('tm-principal').value;
+  const r = +document.getElementById('tm-rate').value / 100;
+  const t = +document.getElementById('tm-years').value;
+  const contrib = +document.getElementById('tm-contrib').value;
+
+  document.getElementById('tm-principal-val').textContent = '$' + P.toLocaleString();
+  document.getElementById('tm-rate-val').textContent = (r * 100).toFixed(0) + '%';
+  document.getElementById('tm-years-val').textContent = t;
+  document.getElementById('tm-contrib-val').textContent = '$' + contrib;
+
+  const years = [], amounts = [], invested = [];
+  let total = P, totalInvested = P;
+  for (let y = 0; y <= t; y++) {
+    years.push(y);
+    amounts.push(Math.round(total));
+    invested.push(Math.round(totalInvested));
+    total = total * (1 + r) + contrib * 12;
+    totalInvested += contrib * 12;
+  }
+
+  drawTMChart(years, amounts, invested);
+
+  const finalAmount = amounts[amounts.length - 1];
+  const finalInvested = invested[invested.length - 1];
+  const gain = finalAmount - finalInvested;
+
+  document.getElementById('tm-summary').innerHTML = `
+    <div class="tm-stat"><span>Final balance</span><strong>$${finalAmount.toLocaleString()}</strong></div>
+    <div class="tm-stat"><span>Total invested</span><strong style="color:var(--blue)">$${finalInvested.toLocaleString()}</strong></div>
+    <div class="tm-stat"><span>Interest earned</span><strong>$${gain.toLocaleString()}</strong></div>
+  `;
+}
+
+function drawTMChart(years, amounts, invested) {
+  const canvas = document.getElementById('tm-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+  const W = canvas.width, H = canvas.height;
+  const pad = { top: 16, right: 16, bottom: 32, left: 60 };
+  const maxVal = Math.max(...amounts);
+  const scaleY = v => H - pad.bottom - ((v / maxVal) * (H - pad.top - pad.bottom));
+  const scaleX = i => pad.left + (i / (years.length - 1)) * (W - pad.left - pad.right);
+
+  ctx.clearRect(0, 0, W, H);
+
+  ctx.strokeStyle = '#ffffff08'; ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (i / 4) * (H - pad.top - pad.bottom);
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
+    ctx.fillStyle = '#64748b'; ctx.font = '10px sans-serif'; ctx.textAlign = 'right';
+    ctx.fillText('$' + Math.round(maxVal * (1 - i / 4)).toLocaleString(), pad.left - 6, y + 4);
+  }
+
+  ctx.beginPath();
+  ctx.moveTo(scaleX(0), scaleY(invested[0]));
+  invested.forEach((v, i) => ctx.lineTo(scaleX(i), scaleY(v)));
+  ctx.lineTo(scaleX(years.length - 1), H - pad.bottom);
+  ctx.lineTo(scaleX(0), H - pad.bottom);
+  ctx.closePath(); ctx.fillStyle = '#3b82f620'; ctx.fill();
+
+  ctx.beginPath();
+  ctx.moveTo(scaleX(0), scaleY(amounts[0]));
+  amounts.forEach((v, i) => ctx.lineTo(scaleX(i), scaleY(v)));
+  ctx.lineTo(scaleX(years.length - 1), H - pad.bottom);
+  ctx.lineTo(scaleX(0), H - pad.bottom);
+  ctx.closePath(); ctx.fillStyle = '#22c55e22'; ctx.fill();
+
+  ctx.beginPath(); ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 2.5;
+  amounts.forEach((v, i) => i === 0 ? ctx.moveTo(scaleX(i), scaleY(v)) : ctx.lineTo(scaleX(i), scaleY(v)));
+  ctx.stroke();
+
+  ctx.beginPath(); ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 1.5; ctx.setLineDash([4, 4]);
+  invested.forEach((v, i) => i === 0 ? ctx.moveTo(scaleX(i), scaleY(v)) : ctx.lineTo(scaleX(i), scaleY(v)));
+  ctx.stroke(); ctx.setLineDash([]);
+
+  ctx.fillStyle = '#64748b'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
+  const step = Math.ceil(years.length / 5);
+  years.forEach((y, i) => {
+    if (i % step === 0 || i === years.length - 1) ctx.fillText('yr ' + y, scaleX(i), H - 8);
+  });
+}
+
+// ─── GAME 3: Income Streams ───────────────
+const INCOME_SOURCES = [
+  { emoji: "💼", name: "Part-time Job", earn: 600, type: "active" },
+  { emoji: "🎨", name: "Freelance Design", earn: 400, type: "active" },
+  { emoji: "📹", name: "YouTube Channel", earn: 120, type: "passive" },
+  { emoji: "📚", name: "Sell an eBook", earn: 80, type: "passive" },
+  { emoji: "🏠", name: "Rent a Room", earn: 500, type: "passive" },
+  { emoji: "📈", name: "Dividend Stocks", earn: 60, type: "passive" },
+];
+let incomeActive = new Set();
+
+function incomeStreamsHTML() {
+  return `
+    <div class="game-wrap">
+      <div class="game-title">Income Builder</div>
+      <div class="game-desc">Click income sources to activate them. Build your monthly portfolio — spot which are active vs passive!</div>
+      <div class="income-grid" id="income-grid"></div>
+      <div class="income-total">
+        <div>
+          <div class="lbl">Monthly income</div>
+          <div style="font-size:0.72rem;color:var(--muted);margin-top:2px" id="income-breakdown"></div>
+        </div>
+        <div class="amount" id="income-total">$0/mo</div>
+      </div>
+    </div>`;
+}
+
+function initIncomeStreams() {
+  incomeActive = new Set();
+  renderIncomeGrid();
+}
+
+function renderIncomeGrid() {
+  const grid = document.getElementById('income-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  INCOME_SOURCES.forEach((src, i) => {
+    const card = document.createElement('div');
+    card.className = `income-card${incomeActive.has(i) ? ' active' : ''}`;
+    card.innerHTML = `<span class="ic-emoji">${src.emoji}</span><div class="ic-name">${src.name}</div><div class="ic-earn">+$${src.earn}/mo · ${src.type}</div>`;
+    card.onclick = () => {
+      incomeActive.has(i) ? incomeActive.delete(i) : incomeActive.add(i);
+      renderIncomeGrid();
+    };
+    grid.appendChild(card);
+  });
+  updateIncomeTotal();
+}
+
+function updateIncomeTotal() {
+  let total = 0, activeAmt = 0, passiveAmt = 0;
+  incomeActive.forEach(i => {
+    const src = INCOME_SOURCES[i];
+    total += src.earn;
+    src.type === 'active' ? (activeAmt += src.earn) : (passiveAmt += src.earn);
+  });
+  const totalEl = document.getElementById('income-total');
+  const breakEl = document.getElementById('income-breakdown');
+  if (totalEl) totalEl.textContent = '$' + total + '/mo';
+  if (breakEl) breakEl.textContent = incomeActive.size === 0 ? 'Select sources above' : `Active: $${activeAmt} · Passive: $${passiveAmt}`;
+}
+
+// ─── GAME 4: Budget Planner ───────────────
+const BUDGET_CATEGORIES = [
+  { name: "Rent / Housing", emoji: "🏠", suggested: 50, type: "need" },
+  { name: "Food & Groceries", emoji: "🛒", suggested: 15, type: "need" },
+  { name: "Transport", emoji: "🚌", suggested: 10, type: "need" },
+  { name: "Entertainment", emoji: "🎬", suggested: 10, type: "want" },
+  { name: "Clothing", emoji: "👕", suggested: 5, type: "want" },
+  { name: "Dining Out", emoji: "🍕", suggested: 10, type: "want" },
+  { name: "Savings", emoji: "💰", suggested: 20, type: "save" },
+];
+let budgetValues = {};
+
+function budgetPlannerHTML() {
+  budgetValues = {};
+  BUDGET_CATEGORIES.forEach(c => { budgetValues[c.name] = c.suggested; });
+  return `
+    <div class="game-wrap">
+      <div class="game-title">Budget Planner</div>
+      <div class="game-desc">Drag each slider to allocate your monthly budget. Try to match the 50/30/20 rule. Total must equal 100%.</div>
+      <div id="budget-rows"></div>
+      <div class="income-total" style="margin-top:1rem">
+        <div>
+          <div class="lbl">Total allocated</div>
+          <div style="font-size:0.72rem;color:var(--muted);margin-top:2px" id="budget-breakdown">Needs: 0% · Wants: 0% · Savings: 0%</div>
+        </div>
+        <div class="amount" id="budget-total" style="font-size:1.2rem">0%</div>
+      </div>
+      <div id="budget-feedback" style="margin-top:1rem;font-size:0.85rem;"></div>
+    </div>`;
+}
+
+function initBudgetPlanner() {
+  renderBudgetRows();
+}
+
+function renderBudgetRows() {
+  const container = document.getElementById('budget-rows');
+  if (!container) return;
+  container.innerHTML = '';
+  BUDGET_CATEGORIES.forEach(cat => {
+    const val = budgetValues[cat.name];
+    const colorMap = { need: 'var(--blue)', want: 'var(--amber)', save: 'var(--green)' };
+    const row = document.createElement('div');
+    row.style.cssText = 'margin-bottom:0.9rem;';
+    row.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem;">
+        <span style="font-size:0.85rem;font-weight:600;color:var(--text)">${cat.emoji} ${cat.name}</span>
+        <span style="font-size:0.8rem;font-weight:700;color:${colorMap[cat.type]}" id="val-${cat.name.replace(/\W/g,'')}">${val}%</span>
+      </div>
+      <input type="range" min="0" max="60" step="1" value="${val}" style="width:100%;accent-color:${colorMap[cat.type]}"
+        oninput="updateBudget('${cat.name}', this.value)">
+    `;
+    container.appendChild(row);
+  });
+  updateBudgetTotal();
+}
+
+function updateBudget(name, value) {
+  budgetValues[name] = parseInt(value);
+  const key = name.replace(/\W/g, '');
+  const el = document.getElementById('val-' + key);
+  if (el) el.textContent = value + '%';
+  updateBudgetTotal();
+}
+
+function updateBudgetTotal() {
+  let total = 0, needs = 0, wants = 0, saves = 0;
+  BUDGET_CATEGORIES.forEach(cat => {
+    const v = budgetValues[cat.name] || 0;
+    total += v;
+    if (cat.type === 'need') needs += v;
+    if (cat.type === 'want') wants += v;
+    if (cat.type === 'save') saves += v;
+  });
+
+  const totalEl = document.getElementById('budget-total');
+  const breakEl = document.getElementById('budget-breakdown');
+  const feedbackEl = document.getElementById('budget-feedback');
+
+  if (totalEl) {
+    totalEl.textContent = total + '%';
+    totalEl.style.color = total === 100 ? 'var(--green)' : total > 100 ? 'var(--red)' : 'var(--amber)';
+  }
+  if (breakEl) breakEl.textContent = `Needs: ${needs}% · Wants: ${wants}% · Savings: ${saves}%`;
+
+  if (feedbackEl) {
+    if (total < 100) feedbackEl.innerHTML = `<span style="color:var(--muted)">Allocate ${100 - total}% more to reach 100%.</span>`;
+    else if (total > 100) feedbackEl.innerHTML = `<span style="color:var(--red)">You're over budget by ${total - 100}%. Reduce some categories.</span>`;
+    else if (needs <= 50 && wants <= 30 && saves >= 20) feedbackEl.innerHTML = `<span style="color:var(--green)">Perfect! Your budget follows the 50/30/20 rule. Needs: ${needs}%, Wants: ${wants}%, Savings: ${saves}%.</span>`;
+    else feedbackEl.innerHTML = `<span style="color:var(--amber)">Budget balanced at 100%. Aim for: Needs ≤50%, Wants ≤30%, Savings ≥20%. Yours: ${needs}% / ${wants}% / ${saves}%.</span>`;
+  }
+}
+
+// ─── GAME 5: Banking Match ────────────────
+const BANKING_PAIRS = [
+  { account: "Current Account", feature: "For daily spending & salary" },
+  { account: "Savings Account", feature: "Earns interest, not for daily use" },
+  { account: "Fixed-Term Deposit", feature: "Locked away for higher rate" },
+  { account: "Deposit Guarantee", feature: "CHF 100,000 government protection" },
+];
+let bankingMatched = new Set();
+let bankingSelected = null;
+
+function bankingMatchHTML() {
+  return `
+    <div class="game-wrap">
+      <div class="game-title">Banking Match</div>
+      <div class="game-desc">Match each account type to its correct feature. Click an account, then click its matching feature.</div>
+      <div class="game-score">Matched: <span id="banking-score">0</span> / ${BANKING_PAIRS.length}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:1rem" id="banking-board"></div>
+      <div id="banking-feedback" style="margin-top:1rem;font-size:0.85rem;min-height:24px;"></div>
+    </div>`;
+}
+
+function initBankingMatch() {
+  bankingMatched = new Set();
+  bankingSelected = null;
+  renderBankingBoard();
+}
+
+function renderBankingBoard() {
+  const board = document.getElementById('banking-board');
+  if (!board) return;
+  const accounts = BANKING_PAIRS.map((p, i) => ({ text: p.account, idx: i, side: 'account' }));
+  const features = [...BANKING_PAIRS.map((p, i) => ({ text: p.feature, idx: i, side: 'feature' }))];
+  // shuffle features
+  for (let i = features.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [features[i], features[j]] = [features[j], features[i]];
+  }
+
+  board.innerHTML = '';
+  for (let i = 0; i < BANKING_PAIRS.length; i++) {
+    ['account', 'feature'].forEach(side => {
+      const item = side === 'account' ? accounts[i] : features[i];
+      const div = document.createElement('div');
+      div.className = 'barter-item';
+      div.id = `bm-${side}-${item.idx}`;
+      div.textContent = item.text;
+      div.dataset.idx = item.idx;
+      div.dataset.side = side;
+      if (bankingMatched.has(item.idx)) {
+        div.style.cssText = 'border-color:var(--green);background:#22c55e12;color:var(--green);cursor:default;';
+      } else {
+        div.onclick = () => handleBankingClick(item.idx, side, div);
+      }
+      board.appendChild(div);
+    });
+  }
+}
+
+function handleBankingClick(idx, side, el) {
+  if (bankingMatched.has(idx)) return;
+  const fb = document.getElementById('banking-feedback');
+
+  if (!bankingSelected) {
+    bankingSelected = { idx, side };
+    el.style.borderColor = 'var(--amber)';
+    el.style.background = '#f59e0b12';
+    return;
+  }
+
+  // Clicked the same element — deselect
+  if (bankingSelected.idx === idx && bankingSelected.side === side) {
+    el.style.borderColor = '';
+    el.style.background = '';
+    bankingSelected = null;
+    return;
+  }
+
+  // Check if it's a valid pair (different sides, same idx = matching pair)
+  if (bankingSelected.side !== side && bankingSelected.idx === idx) {
+    // Correct match!
+    bankingMatched.add(idx);
+    ['account', 'feature'].forEach(s => {
+      const matchEl = document.getElementById(`bm-${s}-${idx}`);
+      if (matchEl) {
+        matchEl.style.cssText = 'border-color:var(--green);background:#22c55e12;color:var(--green);cursor:default;';
+        matchEl.onclick = null;
+      }
+    });
+    document.getElementById('banking-score').textContent = bankingMatched.size;
+    fb.innerHTML = `<span style="color:var(--green)">Correct! "${BANKING_PAIRS[idx].account}" = "${BANKING_PAIRS[idx].feature}"</span>`;
+    if (bankingMatched.size === BANKING_PAIRS.length) {
+      fb.innerHTML += `<br><span style="color:var(--amber);font-weight:700">All matched! You know your account types.</span>`;
+    }
+  } else {
+    // Wrong match — reset previous selection highlight
+    const prevEl = document.getElementById(`bm-${bankingSelected.side}-${bankingSelected.idx}`);
+    if (prevEl) { prevEl.style.borderColor = ''; prevEl.style.background = ''; }
+    fb.innerHTML = `<span style="color:var(--red)">Not a match. Try again!</span>`;
+  }
+  bankingSelected = null;
+}
+
+// ─── GAME 6: Debt Avalanche ───────────────
+const DEBTS_DATA = [
+  { name: "Credit Card A", balance: 1200, rate: 22, minPayment: 30 },
+  { name: "Student Loan", balance: 5000, rate: 6, minPayment: 80 },
+  { name: "Credit Card B", balance: 800, rate: 18, minPayment: 20 },
+  { name: "Car Loan", balance: 3000, rate: 9, minPayment: 60 },
+];
+let debtState = {};
+let extraPayment = 100;
+
+function debtAvalancheHTML() {
+  return `
+    <div class="game-wrap">
+      <div class="game-title">Debt Avalanche</div>
+      <div class="game-desc">You have extra money each month. Click on a debt to throw it at. The avalanche method: always attack the highest interest rate first!</div>
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap;">
+        <label style="font-size:0.8rem;font-weight:700;color:var(--muted)">Extra monthly payment: <span style="color:var(--blue)" id="extra-val">$100</span></label>
+        <input type="range" id="extra-payment" min="50" max="500" step="50" value="100" oninput="updateExtraPayment(this.value)" style="accent-color:var(--blue)">
+      </div>
+      <div id="debt-list"></div>
+      <div id="debt-result" style="margin-top:1rem;"></div>
+    </div>`;
+}
+
+function initDebtAvalanche() {
+  debtState = {};
+  DEBTS_DATA.forEach(d => { debtState[d.name] = { ...d }; });
+  extraPayment = 100;
+  renderDebtList();
+}
+
+function updateExtraPayment(val) {
+  extraPayment = parseInt(val);
+  document.getElementById('extra-val').textContent = '$' + extraPayment;
+}
+
+function renderDebtList() {
+  const container = document.getElementById('debt-list');
+  if (!container) return;
+  container.innerHTML = '';
+  const sorted = [...DEBTS_DATA].sort((a, b) => b.rate - a.rate);
+  sorted.forEach((d, i) => {
+    const current = debtState[d.name];
+    if (current.balance <= 0) return;
+    const isPriority = i === 0;
+    const monthsToPayoff = Math.ceil(current.balance / (current.minPayment + (isPriority ? extraPayment : 0)));
+    const div = document.createElement('div');
+    div.style.cssText = `background:var(--surface2);border:1px solid ${isPriority ? 'var(--amber)' : 'var(--border)'};border-radius:var(--radius);padding:1rem;margin-bottom:0.6rem;cursor:pointer;transition:all 0.2s;`;
+    div.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+        <div>
+          <div style="font-weight:700;color:var(--text);font-size:0.9rem">${isPriority ? '🎯 ' : ''}${d.name}</div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-top:2px">Balance: $${current.balance.toLocaleString()} · Rate: ${d.rate}% APR</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:0.8rem;color:${isPriority ? 'var(--amber)' : 'var(--muted)'};font-weight:700">~${monthsToPayoff} months left</div>
+          <div style="font-size:0.7rem;color:var(--muted)">Min: $${d.minPayment}/mo${isPriority ? ` + $${extraPayment} extra` : ''}</div>
+        </div>
+      </div>
+      <div style="margin-top:0.6rem;background:var(--bg);border-radius:4px;height:6px;overflow:hidden">
+        <div style="height:100%;background:${isPriority ? 'var(--amber)' : 'var(--blue)'};width:${Math.min(100, (1 - current.balance / d.balance) * 100)}%;transition:width 0.4s"></div>
+      </div>
+    `;
+    div.onclick = () => makePayment(d.name, isPriority);
+    container.appendChild(div);
+  });
+
+  // Show paid-off debts
+  DEBTS_DATA.forEach(d => {
+    if (debtState[d.name].balance <= 0) {
+      const div = document.createElement('div');
+      div.style.cssText = 'background:var(--surface2);border:1px solid var(--green);border-radius:var(--radius);padding:0.75rem 1rem;margin-bottom:0.6rem;opacity:0.6;';
+      div.innerHTML = `<span style="color:var(--green);font-weight:700">✓ ${d.name} — Paid off!</span>`;
+      container.appendChild(div);
+    }
+  });
+}
+
+function makePayment(debtName, isPriority) {
+  const d = debtState[debtName];
+  const payment = d.minPayment + (isPriority ? extraPayment : 0);
+  d.balance = Math.max(0, d.balance - payment);
+
+  const resultEl = document.getElementById('debt-result');
+  if (d.balance === 0) {
+    resultEl.innerHTML = `<span style="color:var(--green);font-weight:700">${debtName} paid off!</span>`;
+  } else {
+    resultEl.innerHTML = `<span style="color:var(--blue)">Paid $${payment} on ${debtName}. Remaining: $${d.balance.toLocaleString()}</span>`;
+  }
+
+  const allPaid = DEBTS_DATA.every(d2 => debtState[d2.name].balance <= 0);
+  if (allPaid) {
+    resultEl.innerHTML = `<span style="color:var(--amber);font-weight:700">All debts cleared! The avalanche method wins.</span>`;
+  }
+  renderDebtList();
+}
+
+// ─── GAME 7: Emergency Fund Builder ──────
+let efState = { saved: 0, monthlyExpenses: 2000, target: 6, events: [] };
+const EF_EVENTS = [
+  { text: "Your phone breaks. Repair: CHF 200.", cost: 200, type: "emergency" },
+  { text: "Unexpected medical bill: CHF 350.", cost: 350, type: "emergency" },
+  { text: "Car needs new tires: CHF 500.", cost: 500, type: "emergency" },
+  { text: "You lose your job for 2 months.", cost: 4000, type: "emergency" },
+  { text: "Weekend trip with friends.", cost: 300, type: "want" },
+  { text: "New gaming console on sale.", cost: 400, type: "want" },
+];
+
+function emergencyFundHTML() {
+  efState = { saved: 0, monthlyExpenses: 2000, target: 3, events: [] };
+  return `
+    <div class="game-wrap">
+      <div class="game-title">Emergency Fund Builder</div>
+      <div class="game-desc">Save up your emergency fund, then handle real-life events. Is it actually an emergency — or a want?</div>
+      <div style="display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap">
+        <div class="tm-stat"><span>Monthly expenses</span><strong>CHF 2,000</strong></div>
+        <div class="tm-stat"><span>Target (3 months)</span><strong>CHF 6,000</strong></div>
+        <div class="tm-stat"><span>Saved so far</span><strong id="ef-saved" style="color:var(--amber)">CHF 0</strong></div>
+      </div>
+      <div style="background:var(--bg);border-radius:8px;height:12px;overflow:hidden;margin-bottom:0.75rem">
+        <div id="ef-progress" style="height:100%;background:linear-gradient(90deg,var(--blue),var(--green));width:0%;transition:width 0.5s;border-radius:8px;"></div>
+      </div>
+      <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:1rem">
+        <button class="btn-primary" onclick="efSave(200)" style="font-size:0.8rem;padding:0.5rem 1rem">+ Save CHF 200</button>
+        <button class="btn-primary" onclick="efSave(500)" style="font-size:0.8rem;padding:0.5rem 1rem">+ Save CHF 500</button>
+        <button class="btn-primary" onclick="efSave(1000)" style="font-size:0.8rem;padding:0.5rem 1rem">+ Save CHF 1,000</button>
+      </div>
+      <div id="ef-events" style="margin-top:1.25rem;"></div>
+      <div id="ef-log" style="margin-top:0.75rem;font-size:0.83rem;color:var(--muted);min-height:20px;"></div>
+    </div>`;
+}
+
+function initEmergencyFund() {
+  renderEFEvents();
+}
+
+function efSave(amount) {
+  efState.saved += amount;
+  updateEFDisplay();
+  const log = document.getElementById('ef-log');
+  if (log) log.textContent = `Saved CHF ${amount}. Total: CHF ${efState.saved.toLocaleString()}`;
+  if (efState.saved >= 6000) {
+    if (log) log.innerHTML = `<span style="color:var(--green);font-weight:700">Emergency fund complete! You're financially protected for 3 months.</span>`;
+  }
+}
+
+function updateEFDisplay() {
+  const target = 6000;
+  const pct = Math.min(100, (efState.saved / target) * 100);
+  const savedEl = document.getElementById('ef-saved');
+  const progEl = document.getElementById('ef-progress');
+  if (savedEl) savedEl.textContent = 'CHF ' + efState.saved.toLocaleString();
+  if (progEl) progEl.style.width = pct + '%';
+}
+
+function renderEFEvents() {
+  const container = document.getElementById('ef-events');
+  if (!container) return;
+  if (efState.saved < 1000) {
+    container.innerHTML = `<div style="font-size:0.82rem;color:var(--muted);font-style:italic">Save at least CHF 1,000 to start handling life events...</div>`;
+    return;
+  }
+  container.innerHTML = '<div style="font-size:0.8rem;font-weight:700;color:var(--muted);margin-bottom:0.6rem;letter-spacing:1px;text-transform:uppercase">Life Events</div>';
+  EF_EVENTS.forEach((evt, i) => {
+    const div = document.createElement('div');
+    const isEmergency = evt.type === 'emergency';
+    div.style.cssText = `background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:0.85rem 1rem;margin-bottom:0.5rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;`;
+    div.innerHTML = `
+      <div style="flex:1">
+        <div style="font-size:0.85rem;color:var(--text);font-weight:600">${evt.text}</div>
+        <div style="font-size:0.72rem;color:var(--muted);margin-top:2px">Cost: CHF ${evt.cost.toLocaleString()}</div>
+      </div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+        <button style="background:var(--green);color:#fff;border:none;border-radius:8px;padding:0.35rem 0.75rem;font-size:0.75rem;font-weight:700;cursor:pointer;" onclick="efHandleEvent(${i}, true)">Use fund</button>
+        <button style="background:var(--surface);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:0.35rem 0.75rem;font-size:0.75rem;font-weight:700;cursor:pointer;" onclick="efHandleEvent(${i}, false)">Skip</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function efHandleEvent(idx, useFund) {
+  const evt = EF_EVENTS[idx];
+  const log = document.getElementById('ef-log');
+  if (useFund) {
+    if (evt.type === 'want') {
+      if (log) log.innerHTML = `<span style="color:var(--amber)">That's a WANT, not an emergency! Don't raid your emergency fund for this.</span>`;
+    } else {
+      if (efState.saved >= evt.cost) {
+        efState.saved -= evt.cost;
+        updateEFDisplay();
+        if (log) log.innerHTML = `<span style="color:var(--green)">Smart! Used CHF ${evt.cost} from your fund. Real emergency handled. Fund remaining: CHF ${efState.saved.toLocaleString()}</span>`;
+        setTimeout(renderEFEvents, 300);
+      } else {
+        if (log) log.innerHTML = `<span style="color:var(--red)">Not enough in your fund! You'd need to take on debt. Save more first.</span>`;
+      }
+    }
+  } else {
+    if (evt.type === 'emergency') {
+      if (log) log.innerHTML = `<span style="color:var(--red)">That WAS a real emergency — ignoring it will cause bigger problems later.</span>`;
+    } else {
+      if (log) log.innerHTML = `<span style="color:var(--green)">Correct! That was a WANT, not an emergency. Protecting your fund.</span>`;
+    }
+  }
+}
+
+// ════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════
+window.addEventListener('load', () => {
+  renderHome();
+});
+
+window.addEventListener('resize', () => {
+  if (currentTab === 'game' && currentChapter?.game === 'timemachine') updateTM();
+});
+</script>
+
+</body>
+</html>
