@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy — Fintro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#0a0c10;--surface:#12151c;--surface2:#1a1e28;--border:#ffffff12;--blue:#3b82f6;--blue-dim:#1d4ed8;--amber:#f59e0b;--green:#22c55e;--text:#f1f5f9;--muted:#64748b;--radius:12px;--radius-lg:20px}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;overflow-x:hidden}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:rgba(10,12,16,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+    .nav-logo{font-weight:800;font-size:1.4rem;text-decoration:none;color:var(--text);letter-spacing:-.5px}
+    .nav-logo span{color:var(--amber)}
+    .nav-links{display:flex;align-items:center;gap:.2rem}
+    .nav-links a{color:var(--muted);text-decoration:none;font-size:.82rem;font-weight:600;padding:.4rem .85rem;border-radius:8px;transition:color .2s,background .2s}
+    .nav-links a:hover{color:var(--text);background:var(--surface)}
+    .nav-cta{background:var(--blue)!important;color:#fff!important;margin-left:.25rem!important}
+    .lang-toggle{display:flex;gap:.25rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.2rem;margin-left:1rem}
+    .lang-btn{background:none;border:none;color:var(--muted);font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;padding:.25rem .5rem;border-radius:6px;cursor:pointer;transition:all .2s}
+    .lang-btn.active{background:var(--surface2);color:var(--text)}
+    .page{max-width:760px;margin:0 auto;padding:7rem 2rem 5rem}
+    .page-eyebrow{font-size:.7rem;font-weight:700;letter-spacing:2.5px;color:var(--amber);text-transform:uppercase;margin-bottom:1rem}
+    .page h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);color:var(--text);margin-bottom:.75rem;line-height:1.15}
+    .page-sub{font-size:.9rem;color:var(--muted);margin-bottom:3rem}
+    .privacy-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.25rem}
+    .privacy-card h2{font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--text);margin-bottom:.75rem;display:flex;align-items:center;gap:.6rem}
+    .privacy-card p{font-size:.9rem;color:#94a3b8;line-height:1.8;margin-bottom:.75rem}
+    .privacy-card p:last-child{margin-bottom:0}
+    .privacy-card ul{list-style:none;margin:.5rem 0;display:flex;flex-direction:column;gap:.4rem}
+    .privacy-card ul li{font-size:.88rem;color:#94a3b8;padding-left:1.25rem;position:relative;line-height:1.6}
+    .privacy-card ul li::before{content:'✓';position:absolute;left:0;color:var(--green);font-weight:700;font-size:.8rem}
+    .highlight-card{background:#22c55e08;border:1px solid #22c55e25;border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.25rem;display:flex;align-items:flex-start;gap:1rem}
+    .highlight-card .hc-icon{font-size:1.5rem;flex-shrink:0;margin-top:.1rem}
+    .highlight-card p{font-size:.9rem;color:var(--text);line-height:1.7;margin:0}
+    .highlight-card strong{color:var(--green)}
+    footer{border-top:1px solid var(--border);padding:2rem;text-align:center;margin-top:4rem}
+    footer p{font-size:.78rem;color:var(--muted)}
+    .footer-logo{font-weight:800;font-size:1.1rem;color:var(--text);margin-bottom:.5rem;display:block}
+    .footer-logo span{color:var(--amber)}
+    [data-lang="de"]{display:none}
+    body.lang-de [data-lang="en"]{display:none}
+    body.lang-de [data-lang="de"]{display:block}
+    @media(max-width:640px){nav{padding:.85rem 1rem}.nav-links a:not(.nav-cta){display:none}.page{padding:5.5rem 1.25rem 3rem}}
+  </style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="landing.html">fin<span>tro</span></a>
+  <div class="nav-links">
+    <a href="landing.html" data-lang="en">Home</a>
+    <a href="landing.html" data-lang="de">Start</a>
+    <a href="about.html" data-lang="en">About</a>
+    <a href="about.html" data-lang="de">Über mich</a>
+    <a href="index.html" class="nav-cta" data-lang="en">Start Learning →</a>
+    <a href="index.html" class="nav-cta" data-lang="de">Loslegen →</a>
+  </div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('de')">DE</button>
+  </div>
+</nav>
+
+<main class="page">
+
+  <!-- EN -->
+  <div data-lang="en">
+    <div class="page-eyebrow">Legal</div>
+    <h1>Privacy Policy</h1>
+    <p class="page-sub">Last updated: April 2026 · Fintro is operated by Louis Fritz, Schwyz, Switzerland</p>
+
+    <div class="highlight-card">
+      <div class="hc-icon">🔒</div>
+      <p><strong>Short version:</strong> Fintro collects no personal data. There are no accounts, no tracking, no cookies, and no data is ever sent to a server. Everything stays on your device.</p>
+    </div>
+
+    <div class="privacy-card">
+      <h2>📋 What data we collect</h2>
+      <p>Fintro collects <strong>no personal data whatsoever.</strong> We don't ask for your name, email address, age, or any other identifying information.</p>
+      <p>The only data stored is your learning progress (XP, completed chapters, language preference), saved locally in your browser using <strong>localStorage</strong>. This data never leaves your device and is never transmitted anywhere.</p>
+    </div>
+
+    <div class="privacy-card">
+      <h2>🍪 Cookies & Tracking</h2>
+      <p>Fintro uses <strong>no cookies</strong> and <strong>no tracking technologies</strong> of any kind. There is no analytics software, no advertising pixels, no fingerprinting, and no third-party tracking scripts.</p>
+      <p>The only external service loaded is Google Fonts (for typography). Google may log this request as part of their standard CDN operation — we have no control over this, but no personal data from your usage of Fintro is involved.</p>
+    </div>
+
+    <div class="privacy-card">
+      <h2>🧒 Children & Minors</h2>
+      <p>Fintro is specifically designed for teenagers. Because we collect no personal data and require no account creation, the platform is safe for users of all ages, including minors under 13 (COPPA) and under 16 (GDPR).</p>
+      <p>Parents and guardians can verify this policy at any time. No consent mechanism is required because no data is collected.</p>
+    </div>
+
+    <div class="privacy-card">
+      <h2>📤 Data Sharing</h2>
+      <p>We share <strong>no data with any third parties</strong> — because we collect none. There are no advertising partners, data brokers, or analytics companies involved with Fintro.</p>
+    </div>
+
+    <div class="privacy-card">
+      <h2>🗑️ Deleting Your Data</h2>
+      <p>Your progress is stored only in your browser's localStorage. To delete it completely:</p>
+      <ul>
+        <li>Open your browser settings</li>
+        <li>Go to "Clear browsing data" or "Storage"</li>
+        <li>Clear site data for fintrooo.netlify.app (or your current Fintro URL)</li>
+      </ul>
+      <p style="margin-top:.75rem">Alternatively, clearing all localStorage data in your browser will remove Fintro's data along with any other sites.</p>
+    </div>
+
+    <div class="privacy-card">
+      <h2>📬 Contact</h2>
+      <p>Fintro is a personal project built and operated by <strong>Louis Fritz</strong>, age 14, based in Schwyz, Switzerland. For any questions about this privacy policy, you can reach out via the contact information on the About page.</p>
+      <p>This website is non-commercial and free. It is not operated as a business.</p>
+    </div>
+  </div>
+
+  <!-- DE -->
+  <div data-lang="de">
+    <div class="page-eyebrow">Rechtliches</div>
+    <h1>Datenschutzerklärung</h1>
+    <p class="page-sub">Zuletzt aktualisiert: April 2026 · Fintro wird betrieben von Louis Fritz, Schwyz, Schweiz</p>
+
+    <div class="highlight-card">
+      <div class="hc-icon">🔒</div>
+      <p><strong>Kurzversion:</strong> Fintro sammelt keinerlei persönliche Daten. Es gibt keine Accounts, kein Tracking, keine Cookies und keine Daten werden jemals an einen Server übermittelt. Alles bleibt auf deinem Gerät.</p>
+    </div>
+
+    <div class="privacy-card">
+      <h2>📋 Welche Daten wir erheben</h2>
+      <p>Fintro erhebt <strong>keinerlei personenbezogene Daten.</strong> Wir fragen nicht nach Name, E-Mail-Adresse, Alter oder anderen identifizierenden Informationen.</p>
+      <p>Die einzigen gespeicherten Daten sind dein Lernfortschritt (XP, abgeschlossene Kapitel, Spracheinstellung), lokal in deinem Browser über <strong>localStorage</strong> gespeichert. Diese Daten verlassen dein Gerät nie und werden nirgendwo übermittelt.</p>
+    </div>
+
+    <div class="privacy-card">
+      <h2>🍪 Cookies & Tracking</h2>
+      <p>Fintro verwendet <strong>keine Cookies</strong> und <strong>keinerlei Tracking-Technologien</strong>. Es gibt keine Analysesoftware, keine Werbe-Pixel, kein Fingerprinting und keine Tracking-Skripte von Drittanbietern.</p>
+      <p>Der einzige externe Dienst ist Google Fonts (für Schriftarten). Google kann diese Anfrage im Rahmen des normalen CDN-Betriebs protokollieren — wir haben keinen Einfluss darauf, aber keine personenbezogenen Daten aus deiner Nutzung von Fintro sind dabei involviert.</p>
+    </div>
+
+    <div class="privacy-card">
+      <h2>🧒 Kinder & Minderjährige</h2>
+      <p>Fintro ist speziell für Jugendliche konzipiert. Da wir keine personenbezogenen Daten erheben und keine Kontoerstellung erfordern, ist die Plattform für Nutzer jeden Alters sicher, einschliesslich Minderjähriger unter 16 Jahren (DSGVO).</p>
+      <p>Eltern und Erziehungsberechtigte können diese Erklärung jederzeit einsehen. Es ist kein Einwilligungsmechanismus erforderlich, da keine Daten erhoben werden.</p>
+    </div>
+
+    <div class="privacy-card">
+      <h2>📤 Datenweitergabe</h2>
+      <p>Wir geben <strong>keine Daten an Dritte weiter</strong> — weil wir keine erheben. Es gibt keine Werbepartner, Datenhändler oder Analyseunternehmen, die mit Fintro verbunden sind.</p>
+    </div>
+
+    <div class="privacy-card">
+      <h2>🗑️ Daten löschen</h2>
+      <p>Dein Fortschritt wird nur im localStorage deines Browsers gespeichert. So löschst du ihn vollständig:</p>
+      <ul>
+        <li>Browsereinstellungen öffnen</li>
+        <li>"Browserdaten löschen" oder "Speicher" aufrufen</li>
+        <li>Website-Daten für fintrooo.netlify.app löschen</li>
+      </ul>
+      <p style="margin-top:.75rem">Alternativ werden Fintros Daten beim Löschen aller localStorage-Daten im Browser mitentfernt.</p>
+    </div>
+
+    <div class="privacy-card">
+      <h2>📬 Kontakt</h2>
+      <p>Fintro ist ein persönliches Projekt, das von <strong>Louis Fritz</strong>, 14 Jahre, aus Schwyz, Schweiz, betrieben wird. Bei Fragen zu dieser Datenschutzerklärung kannst du dich über die Kontaktinformationen auf der About-Seite melden.</p>
+      <p>Diese Website ist nicht kommerziell und kostenlos. Sie wird nicht als Unternehmen betrieben.</p>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <span class="footer-logo">fin<span>tro</span></span>
+  <p data-lang="en">Built by Louis Fritz, age 14 · Schwyz, Switzerland</p>
+  <p data-lang="de">Erstellt von Louis Fritz, 14 · Schwyz, Schweiz</p>
+  <p style="margin-top:.5rem;font-size:.7rem">© 2026 Fintro · Free forever</p>
+</footer>
+
+<script>
+  function setLang(lang){document.body.classList.toggle('lang-de',lang==='de');document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');localStorage.setItem('fintro_lang',lang)}
+  const saved=localStorage.getItem('fintro_lang');if(saved==='de')setLang('de');
+</script>
+</body>
+</html>
