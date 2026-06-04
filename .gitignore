@@ -1,0 +1,21 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Claude Code — internal/local only (never commit; Netlify serves the repo root publicly)
+.claude/
+CLAUDE.md
+
+# Secrets / env
+.env
+.env.*
+secrets/
+
+# Logs / temp
+*.log
+node_modules/

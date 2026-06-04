@@ -364,7 +364,7 @@
     <div class="stat-card"><span class="val" id="stat-xp">0</span><span class="lbl" data-i18n="total_xp">Total XP</span></div>
     <div class="stat-card"><span class="val" id="stat-streak">0🔥</span><span class="lbl" data-i18n="day_streak">Day Streak</span></div>
   </div>
-  <div id="continue-banner" style="display:none;background:#3b82f610;border:1px solid #3b82f630;border-radius:12px;padding:.85rem 1.1rem;margin-bottom:1.5rem;cursor:pointer;display:flex;align-items:center;gap:.75rem" onclick="continueLearning()">
+  <div id="continue-banner" style="display:none;background:#3b82f610;border:1px solid #3b82f630;border-radius:12px;padding:.85rem 1.1rem;margin-bottom:1.5rem;cursor:pointer;align-items:center;gap:.75rem" onclick="continueLearning()">
     <span style="font-size:1.1rem">▶</span>
     <div style="flex:1"><div style="font-size:.75rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.5px" data-i18n="continue_label">Continue where you left off</div><div style="font-size:.82rem;color:var(--muted)" id="continue-chapter-name"></div></div>
     <span style="font-size:.82rem;color:var(--blue);font-weight:700">→</span>
@@ -1503,7 +1503,7 @@ const CHAPTERS = [
 ];
 
 // ════ STATE ════
-let state = JSON.parse(localStorage.getItem('fintro_state')||'null')||{xp:0,completedChapters:[],streak:1};
+let state = JSON.parse(localStorage.getItem('fintro_state')||'null')||{xp:0,completedChapters:[],streak:0,lastActiveDate:null};
 // currentLang already declared above DATA section (needed by g() during data init)
 
 const PHASE_LABELS = {
@@ -1525,6 +1525,7 @@ const UI_STRINGS = {
     back:'← Back',revealed:'Revealed',tap_to_reveal:'tap to reveal',
     next:'Next →',continue_game:'Continue to Game →',retry:'Retry Quiz',
     q_label:'Question',correct_lbl:'✓ Correct',wrong_lbl:'✗ Not quite',
+    done_badge:'✓ Done',start_badge:'▶ Start',correct_word:'correct',ch_short:'Ch.',
     great:'Great work!',good:'Good effort!',practice:'Keep practicing!',
     understand:'You really understand this chapter.',review:'Review the lesson and try again!'
   },
@@ -1542,6 +1543,7 @@ const UI_STRINGS = {
     back:'← Zurück',revealed:'Aufgedeckt',tap_to_reveal:'tippen zum Aufdecken',
     next:'Weiter →',continue_game:'Zum Spiel →',retry:'Quiz wiederholen',
     q_label:'Frage',correct_lbl:'✓ Richtig',wrong_lbl:'✗ Nicht ganz',
+    done_badge:'✓ Erledigt',start_badge:'▶ Start',correct_word:'richtig',ch_short:'Kap.',
     great:'Gut gemacht!',good:'Guter Versuch!',practice:'Weiter üben!',
     understand:'Du hast dieses Kapitel wirklich verstanden.',review:'Schau dir die Lektion nochmal an!'
   }
@@ -1571,6 +1573,8 @@ function toggleLang(){
     else if(currentTab==='quiz'){quizState={index:0,score:0,answered:false,done:false};renderQuiz();}
     else if(currentTab==='game') renderGame();
   }
+  // Re-render home so the chapter list + continue banner switch language too
+  if(document.getElementById('home-screen').classList.contains('active'))renderHome();
 }
 
 function clearTranslationCache(chId){
@@ -1616,6 +1620,25 @@ let quizState={index:0,score:0,answered:false,done:false};
 let vocabRevealed=new Set();
 
 function saveState(){localStorage.setItem('fintro_state',JSON.stringify(state))}
+
+// ════ STREAK (daily, tied to real activity) ════
+function dateStr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function todayStr(){return dateStr(new Date());}
+function yesterdayStr(){const d=new Date();d.setDate(d.getDate()-1);return dateStr(d);}
+// Honest current streak: only counts if the last active day was today or yesterday, else it's broken (0).
+function currentStreak(){
+  if(!state.lastActiveDate)return 0;
+  if(state.lastActiveDate===todayStr()||state.lastActiveDate===yesterdayStr())return state.streak||0;
+  return 0;
+}
+// Call on genuine learning activity (finishing a quiz). Increments once per day.
+function registerActivity(){
+  const today=todayStr();
+  if(state.lastActiveDate===today)return; // already counted today
+  state.streak = state.lastActiveDate===yesterdayStr() ? (state.streak||0)+1 : 1;
+  state.lastActiveDate=today;
+  saveState();
+}
 
 // ════ TRANSLATION HELPERS ════
 // g() and scenLabel() already defined before DATA section — available globally
@@ -1699,13 +1722,15 @@ function renderHome(){
   document.getElementById('xp-count').textContent=`${state.xp} / ${maxXP} XP`;
   document.getElementById('stat-chapters').textContent=state.completedChapters.length;
   document.getElementById('stat-xp').textContent=state.xp;
-  document.getElementById('stat-streak').textContent=state.streak+'🔥';
+  document.getElementById('stat-streak').textContent=currentStreak()+'🔥';
   // Continue banner
   const firstIncomplete=CHAPTERS.find(c=>!state.completedChapters.includes(c.id));
   const banner=document.getElementById('continue-banner');
   if(firstIncomplete&&state.completedChapters.length>0){
     banner.style.display='flex';
-    document.getElementById('continue-chapter-name').textContent=`Unit ${firstIncomplete.unit} · Ch.${firstIncomplete.id}: ${firstIncomplete.title}`;
+    const de=currentLang==='de'&&typeof CHAPTERS_DE!=='undefined'?CHAPTERS_DE.find(c=>c.id===firstIncomplete.id):null;
+    const ciTitle=de&&de.title?de.title:firstIncomplete.title;
+    document.getElementById('continue-chapter-name').textContent=`Unit ${firstIncomplete.unit} · ${UI_STRINGS[currentLang].ch_short}${firstIncomplete.id}: ${ciTitle}`;
     window._continueId=firstIncomplete.id;
   } else { banner.style.display='none'; }
   for(let u=1;u<=5;u++) renderChapterList(u,'chapter-list-'+u);
@@ -1741,12 +1766,17 @@ function updateUnitProgress(){
 
 function renderChapterList(unit,cid){
   const list=document.getElementById(cid);list.innerHTML='';
+  const s=UI_STRINGS[currentLang];
+  const useDE=currentLang==='de'&&typeof CHAPTERS_DE!=='undefined';
   CHAPTERS.filter(c=>c.unit===unit).forEach(ch=>{
+    const de=useDE?CHAPTERS_DE.find(c=>c.id===ch.id):null;
+    const title=de&&de.title?de.title:ch.title;
+    const subtitle=de&&de.subtitle?de.subtitle:ch.subtitle;
     const done=state.completedChapters.includes(ch.id);
     const row=document.createElement('div');
     row.className=`chapter-row${done?' completed':''}`;
     row.onclick=()=>openChapter(ch.id);
-    row.innerHTML=`<span class="ch-num">${ch.id<10?'0'+ch.id:ch.id}</span><div class="ch-info"><div class="ch-title">${ch.title}</div><div class="ch-sub">${ch.subtitle}</div></div><span class="ch-xp" style="font-size:.75rem;color:var(--amber);font-weight:700;white-space:nowrap">+${ch.xpReward} XP</span>${done?'<span class="ch-badge done">✓ Done</span>':'<span class="ch-badge active">▶ Start</span>'}`;
+    row.innerHTML=`<span class="ch-num">${ch.id<10?'0'+ch.id:ch.id}</span><div class="ch-info"><div class="ch-title">${title}</div><div class="ch-sub">${subtitle}</div></div><span class="ch-xp" style="font-size:.75rem;color:var(--amber);font-weight:700;white-space:nowrap">+${ch.xpReward} XP</span>${done?`<span class="ch-badge done">${s.done_badge}</span>`:`<span class="ch-badge active">${s.start_badge}</span>`}`;
     list.appendChild(row);
   });
 }
@@ -1868,7 +1898,7 @@ function renderQuiz(){
     <div class="quiz-header">
       <div class="quiz-header-left">
         <div class="quiz-step-pill">${quizState.index+1} / ${qs.length}</div>
-        <div class="quiz-score-pill">${quizState.score} correct</div>
+        <div class="quiz-score-pill">${quizState.score} ${UI_STRINGS[currentLang].correct_word}</div>
       </div>
     </div>
     <div class="quiz-bar-track"><div class="quiz-bar-fill" style="width:${progress}%"></div></div>
@@ -1904,6 +1934,7 @@ function nextQuestion(){
   quizState.index++;quizState.answered=false;
   if(quizState.index>=currentChapter.quiz.length){
     quizState.done=true;
+    registerActivity(); // daily streak — counts genuine learning, once per day
     const isNewCompletion = !state.completedChapters.includes(currentChapter.id);
     if(isNewCompletion){
       state.completedChapters.push(currentChapter.id);
@@ -2390,20 +2421,20 @@ const TC_CANTONS=[
 ];
 function taxCalculatorHTML(){
   return`<div class="game-wrap">
-    <div class="game-header"><div class="game-title">Tax Calculator</div><div class="game-desc">Adjust your gross income, pick your canton or country, and see exactly what you keep. Compare how much location affects your bill.</div></div>
+    <div class="game-header"><div class="game-title">${g('Tax Calculator','Steuer-Rechner')}</div><div class="game-desc">${g('Adjust your gross income, pick your canton or country, and see exactly what you keep. Compare how much location affects your bill.','Stelle dein Bruttoeinkommen ein, wähle Kanton oder Land und sieh genau, was übrig bleibt. Vergleiche, wie stark der Ort deine Rechnung beeinflusst.')}</div></div>
     <div class="twin-controls">
-      <div class="tm-control"><label>Gross annual income: <span class="tm-val" id="tc-gross-val">CHF 60,000</span></label><input type="range" id="tc-gross" min="10000" max="250000" step="5000" value="60000" oninput="updateTax()"></div>
-      <div class="tm-control"><label>Location: <span class="tm-val" id="tc-canton-val">Schwyz</span></label><select id="tc-canton" onchange="updateTax()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:.4rem .7rem;font-family:'Syne',sans-serif;font-size:.82rem;width:100%;margin-top:.25rem">${TC_CANTONS.map((c,i)=>`<option value="${i}">${c.name} (${c.country})</option>`).join('')}</select></div>
+      <div class="tm-control"><label>${g('Gross annual income:','Bruttojahreseinkommen:')} <span class="tm-val" id="tc-gross-val">CHF 60,000</span></label><input type="range" id="tc-gross" min="10000" max="250000" step="5000" value="60000" oninput="updateTax()"></div>
+      <div class="tm-control"><label>${g('Location:','Ort:')} <span class="tm-val" id="tc-canton-val">Schwyz</span></label><select id="tc-canton" onchange="updateTax()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:.4rem .7rem;font-family:'Syne',sans-serif;font-size:.82rem;width:100%;margin-top:.25rem">${TC_CANTONS.map((c,i)=>`<option value="${i}">${c.name} (${c.country})</option>`).join('')}</select></div>
     </div>
     <div id="tc-result" style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem"></div>
     <div style="background:var(--bg);border-radius:var(--radius);padding:1rem;margin-bottom:.75rem">
-      <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.6rem">Breakdown</div>
+      <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.6rem">${g('Breakdown','Aufschlüsselung')}</div>
       <div id="tc-breakdown"></div>
     </div>
     <div id="tc-bar" style="height:20px;border-radius:8px;overflow:hidden;display:flex;margin-top:.5rem"></div>
     <div style="display:flex;gap:1rem;margin-top:.5rem;font-size:.75rem;color:var(--muted);flex-wrap:wrap" id="tc-legend"></div>
     <div id="tc-compare" style="margin-top:1.25rem;background:var(--bg);border-radius:var(--radius);padding:1rem">
-      <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.75rem">Compare — same income, different locations</div>
+      <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.75rem">${g('Compare — same income, different locations','Vergleich — gleiches Einkommen, andere Orte')}</div>
       <div id="tc-compare-grid"></div>
     </div>
   </div>`;}
@@ -2422,19 +2453,19 @@ function updateTax(){
   const effRate=Math.round(totalTax/gross*100);
   const currency=canton.country==='CH'?'CHF':'€';
   document.getElementById('tc-result').innerHTML=`
-    <div class="tm-stat"><span>Gross income</span><strong style="color:var(--text)">${currency} ${gross.toLocaleString()}</strong></div>
-    <div class="tm-stat"><span>Total deductions</span><strong style="color:var(--red)">${currency} ${totalTax.toLocaleString()}</strong></div>
-    <div class="tm-stat"><span>Net (take-home)</span><strong style="color:var(--green)">${currency} ${net.toLocaleString()}</strong></div>
-    <div class="tm-stat"><span>Effective rate</span><strong style="color:var(--amber)">${effRate}%</strong></div>`;
+    <div class="tm-stat"><span>${g('Gross income','Bruttoeinkommen')}</span><strong style="color:var(--text)">${currency} ${gross.toLocaleString()}</strong></div>
+    <div class="tm-stat"><span>${g('Total deductions','Gesamtabzüge')}</span><strong style="color:var(--red)">${currency} ${totalTax.toLocaleString()}</strong></div>
+    <div class="tm-stat"><span>${g('Net (take-home)','Netto (ausbezahlt)')}</span><strong style="color:var(--green)">${currency} ${net.toLocaleString()}</strong></div>
+    <div class="tm-stat"><span>${g('Effective rate','Effektiver Satz')}</span><strong style="color:var(--amber)">${effRate}%</strong></div>`;
   const rows=canton.country==='CH'?[
-    {label:'Federal tax',val:federal,color:'var(--blue)'},
-    {label:`Cantonal tax (${canton.name})`,val:cantonal,color:'var(--amber)'},
-    {label:'Social (AHV/IV/ALV)',val:social,color:'var(--muted)'},
-    {label:'Net income',val:net,color:'var(--green)'},
+    {label:g('Federal tax','Bundessteuer'),val:federal,color:'var(--blue)'},
+    {label:`${g('Cantonal tax','Kantonssteuer')} (${canton.name})`,val:cantonal,color:'var(--amber)'},
+    {label:g('Social (AHV/IV/ALV)','Sozialabgaben (AHV/IV/ALV)'),val:social,color:'var(--muted)'},
+    {label:g('Net income','Nettoeinkommen'),val:net,color:'var(--green)'},
   ]:[
-    {label:`Income tax (${canton.name})`,val:cantonal,color:'var(--amber)'},
-    {label:'Social contributions',val:social,color:'var(--muted)'},
-    {label:'Net income',val:net,color:'var(--green)'},
+    {label:`${g('Income tax','Einkommensteuer')} (${canton.name})`,val:cantonal,color:'var(--amber)'},
+    {label:g('Social contributions','Sozialabgaben'),val:social,color:'var(--muted)'},
+    {label:g('Net income','Nettoeinkommen'),val:net,color:'var(--green)'},
   ];
   document.getElementById('tc-breakdown').innerHTML=rows.map(r=>`<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:.82rem"><span style="color:var(--muted)">${r.label}</span><span style="font-weight:700;color:${r.color}">${currency} ${r.val.toLocaleString()}</span></div>`).join('');
   const segs=rows.map((r,i)=>({v:r.val,c:r.color}));
@@ -2444,7 +2475,7 @@ function updateTax(){
   const compare=[{name:'Zug',rate:0.058+0.11+0.065},{name:'Schwyz',rate:0.058+0.13+0.065},{name:'Zurich',rate:0.058+0.19+0.065},{name:'Bern',rate:0.058+0.21+0.065},{name:'Geneva',rate:0.058+0.25+0.065}];
   document.getElementById('tc-compare-grid').innerHTML=compare.map(c=>{
     const n=Math.round(gross*(1-c.rate));const isCur=c.name===canton.name;
-    return`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:.82rem${isCur?';background:#f59e0b08;margin:0 -.5rem;padding:5px .5rem;border-radius:6px':''}"><span style="color:${isCur?'var(--amber)':'var(--muted)'};font-weight:${isCur?700:400}">${c.name}${isCur?' ←':''}</span><span style="color:${isCur?'var(--green)':'var(--muted)'}">CHF ${n.toLocaleString()} net</span></div>`;
+    return`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:.82rem${isCur?';background:#f59e0b08;margin:0 -.5rem;padding:5px .5rem;border-radius:6px':''}"><span style="color:${isCur?'var(--amber)':'var(--muted)'};font-weight:${isCur?700:400}">${c.name}${isCur?' ←':''}</span><span style="color:${isCur?'var(--green)':'var(--muted)'}">CHF ${n.toLocaleString()} ${g('net','netto')}</span></div>`;
   }).join('');
 }
 
@@ -2664,17 +2695,25 @@ function runPortfolioSim(){
   const bars=yearlyValues.map((v,i)=>{
     const h=Math.max(4,Math.round((v/maxV)*maxH));
     const col=v>=principal?'var(--green)':'var(--red)';
-    return`<div class="pc-bar-col"><div class="pc-bar-fill" style="height:${h}px;background:${col}"><span class="pc-bar-val" style="font-size:7px">${v>=10000?Math.round(v/1000)+'k':v}</span></div><div class="pc-bar-year">yr ${i}</div></div>`;
+    return`<div class="pc-bar-col"><div class="pc-bar-fill" style="height:${h}px;background:${col}"><span class="pc-bar-val" style="font-size:7px">${v>=10000?Math.round(v/1000)+'k':v}</span></div><div class="pc-bar-year">${g('yr','J')} ${i}</div></div>`;
   }).join('');
   const r=document.getElementById('pb-result');
+  const de=currentLang==='de'&&typeof PB_RESULT_DE!=='undefined';
+  const lblStarted=de?PB_RESULT_DE.started:'Started';
+  const lblAfter=de?PB_RESULT_DE.after10:'After 10 years';
+  const lblAnn=de?PB_RESULT_DE.annualised:'Annualised';
+  const lblAgain=de?PB_RESULT_DE.again:'Simulate again ↻';
+  const summary=gain>=0
+    ?(de?PB_RESULT_DE.gained(gain.toLocaleString()):`<span style="color:var(--green)">+CHF ${gain.toLocaleString()} gained.</span> Real results vary — this is one simulated path.`)
+    :(de?PB_RESULT_DE.lost(Math.abs(gain).toLocaleString()):`<span style="color:var(--red)">CHF ${Math.abs(gain).toLocaleString()} lost.</span> This is why diversification matters.`);
   r.innerHTML=`<div style="background:var(--bg);border:1px solid ${gain>=0?'#22c55e30':'#ef444430'};border-radius:var(--radius);padding:1.1rem;margin-top:.5rem">
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem;margin-bottom:1rem">
-      <div class="tm-stat"><span>Started</span><strong>CHF 10,000</strong></div>
-      <div class="tm-stat"><span>After 10 years</span><strong style="color:${gain>=0?'var(--green)':'var(--red)'}">CHF ${finalValue.toLocaleString()}</strong></div>
-      <div class="tm-stat"><span>Annualised</span><strong style="color:var(--amber)">${annualized.toFixed(1)}%/yr</strong></div>
+      <div class="tm-stat"><span>${lblStarted}</span><strong>CHF 10,000</strong></div>
+      <div class="tm-stat"><span>${lblAfter}</span><strong style="color:${gain>=0?'var(--green)':'var(--red)'}">CHF ${finalValue.toLocaleString()}</strong></div>
+      <div class="tm-stat"><span>${lblAnn}</span><strong style="color:var(--amber)">${annualized.toFixed(1)}%/${g('yr','J')}</strong></div>
     </div>
     <div class="pc-bars" style="height:${maxH}px;margin-bottom:.75rem">${bars}</div>
-    <div style="font-size:.82rem;color:var(--muted);line-height:1.6">${gain>=0?`<span style="color:var(--green)">+CHF ${gain.toLocaleString()} gained.</span> Real results vary — this is one simulated path.`:`<span style="color:var(--red)">CHF ${Math.abs(gain).toLocaleString()} lost.</span> This is why diversification matters.`} <button style="background:none;border:none;color:var(--blue);font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;padding:0;margin-left:.5rem" onclick="runPortfolioSim()">Simulate again ↻</button></div>
+    <div style="font-size:.82rem;color:var(--muted);line-height:1.6">${summary} <button style="background:none;border:none;color:var(--blue);font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;padding:0;margin-left:.5rem" onclick="runPortfolioSim()">${lblAgain}</button></div>
   </div>`;
 }
 
@@ -2722,26 +2761,32 @@ function updateBVR(){
   const buyNetPosition=propGain-transactionCosts-maintenance*12*years;
   const rentTotal=rent*12*years;
   const rentNetPosition=-rentTotal+investedOpportunityCost; // invested the down payment
+  const de=currentLang==='de'&&typeof BVR_DE!=='undefined';
+  const mo=g('mo','Mt.');
   document.getElementById('bvr-result').innerHTML=`
     <div class="twin-card blue">
-      <h4>Buying</h4>
-      <div class="twin-amount" style="font-size:1.2rem">CHF ${totalMonthlyCost.toLocaleString()}/mo</div>
-      <div class="twin-sub">Mortgage + maintenance</div>
-      <div style="margin-top:.75rem;font-size:.75rem;color:var(--muted)">Down payment: CHF ${down.toLocaleString()}</div>
-      <div style="font-size:.75rem;color:var(--muted)">Transaction costs: CHF ${transactionCosts.toLocaleString()}</div>
-      <div style="font-size:.75rem;color:${propGain>0?'var(--green)':'var(--red)'};font-weight:700;margin-top:.4rem">Property gain after ${years}yr: +CHF ${propGain.toLocaleString()}</div>
+      <h4>${de?BVR_DE.buying:'Buying'}</h4>
+      <div class="twin-amount" style="font-size:1.2rem">CHF ${totalMonthlyCost.toLocaleString()}/${mo}</div>
+      <div class="twin-sub">${de?BVR_DE.mortgage:'Mortgage + maintenance'}</div>
+      <div style="margin-top:.75rem;font-size:.75rem;color:var(--muted)">${de?BVR_DE.down:'Down payment'}: CHF ${down.toLocaleString()}</div>
+      <div style="font-size:.75rem;color:var(--muted)">${de?BVR_DE.transaction:'Transaction costs'}: CHF ${transactionCosts.toLocaleString()}</div>
+      <div style="font-size:.75rem;color:${propGain>0?'var(--green)':'var(--red)'};font-weight:700;margin-top:.4rem">${de?BVR_DE.gain.replace('${y}',years):'Property gain after '+years+'yr'}: +CHF ${propGain.toLocaleString()}</div>
     </div>
     <div class="twin-card amber">
-      <h4>Renting</h4>
-      <div class="twin-amount" style="font-size:1.2rem">CHF ${rent.toLocaleString()}/mo</div>
-      <div class="twin-sub">Monthly rent</div>
-      <div style="margin-top:.75rem;font-size:.75rem;color:var(--muted)">Down payment invested instead</div>
-      <div style="font-size:.75rem;color:var(--muted)">CHF ${down.toLocaleString()} → grows to CHF ${investedDown.toLocaleString()}</div>
-      <div style="font-size:.75rem;color:var(--green);font-weight:700;margin-top:.4rem">Investment gain: +CHF ${investedOpportunityCost.toLocaleString()}</div>
+      <h4>${de?BVR_DE.renting:'Renting'}</h4>
+      <div class="twin-amount" style="font-size:1.2rem">CHF ${rent.toLocaleString()}/${mo}</div>
+      <div class="twin-sub">${de?BVR_DE.rent:'Monthly rent'}</div>
+      <div style="margin-top:.75rem;font-size:.75rem;color:var(--muted)">${de?BVR_DE.invested:'Down payment invested instead'}</div>
+      <div style="font-size:.75rem;color:var(--muted)">CHF ${down.toLocaleString()} ${de?BVR_DE.grows_to:'→ grows to'} CHF ${investedDown.toLocaleString()}</div>
+      <div style="font-size:.75rem;color:var(--green);font-weight:700;margin-top:.4rem">${de?BVR_DE.inv_gain:'Investment gain'}: +CHF ${investedOpportunityCost.toLocaleString()}</div>
     </div>`;
   const winner=buyNetPosition>rentNetPosition?'buying':'renting';
   const diff=Math.abs(buyNetPosition-rentNetPosition);
-  document.getElementById('bvr-verdict').innerHTML=`<strong>After ${years} years:</strong> ${winner==='buying'?'<span style="color:var(--blue)">Buying</span>':'<span style="color:var(--amber)">Renting + investing</span>'} comes out approximately <strong>CHF ${diff.toLocaleString()} ahead</strong> in this scenario.<br><br><span style="color:var(--muted);font-size:.82rem">In Switzerland: 20% minimum down payment required (10% must be cash equity). Property prices are among Europe's highest. The break-even point is usually 5–8 years. ${years<6?'At '+years+' years, buying rarely wins.':''}</span>`;
+  const winnerLabel=winner==='buying'?`<span style="color:var(--blue)">${de?BVR_DE.buying:'Buying'}</span>`:`<span style="color:var(--amber)">${de?BVR_DE.renting:'Renting + investing'}</span>`;
+  const verdictText=de
+    ?`<strong>${g('After','Nach')} ${years} ${g('years','Jahren')}:</strong> ${BVR_DE.ahead(winnerLabel,diff.toLocaleString(),years)}<br><br><span style="color:var(--muted);font-size:.82rem">${BVR_DE.note(years)}</span>`
+    :`<strong>After ${years} years:</strong> ${winnerLabel} comes out approximately <strong>CHF ${diff.toLocaleString()} ahead</strong> in this scenario.<br><br><span style="color:var(--muted);font-size:.82rem">In Switzerland: 20% minimum down payment required (10% must be cash equity). Property prices are among Europe's highest. The break-even point is usually 5–8 years. ${years<6?'At '+years+' years, buying rarely wins.':''}</span>`;
+  document.getElementById('bvr-verdict').innerHTML=verdictText;
 }
 
 // ─── GAME 14: Market Panic ────────────────────────────────
@@ -3029,8 +3074,8 @@ function updateFIRE(){
   document.getElementById('fc-stats').innerHTML=`
     <div class="tm-stat"><span>${g('FIRE Number','FIRE-Zahl')}</span><strong style="color:var(--amber)">CHF ${fireNumber.toLocaleString()}</strong></div>
     <div class="tm-stat"><span>${g('Savings Rate','Sparquote')}</span><strong style="color:var(--blue)">${savingsRate}%</strong></div>
-    <div class="tm-stat"><span>${g('Years to FIRE','Jahre bis FIRE')}</span><strong style="color:${years<=20?'var(--green)':years<=35?'var(--amber)':'var(--red)}'}">${years<=60?years:g('60+','60+')}</strong></div>
-    <div class="tm-stat"><span>${g('FIRE Age','FIRE-Alter')}</span><strong style="color:${fireAge<=50?'var(--green)':fireAge<=65?'var(--amber)':'var(--red)}'}">${fireAge<=80?fireAge:'80+'}</strong></div>`;
+    <div class="tm-stat"><span>${g('Years to FIRE','Jahre bis FIRE')}</span><strong style="color:${years<=20?'var(--green)':years<=35?'var(--amber)':'var(--red)'}">${years<=60?years:g('60+','60+')}</strong></div>
+    <div class="tm-stat"><span>${g('FIRE Age','FIRE-Alter')}</span><strong style="color:${fireAge<=50?'var(--green)':fireAge<=65?'var(--amber)':'var(--red)'}">${fireAge<=80?fireAge:'80+'}</strong></div>`;
   // Mini chart
   const milestones=[0.25,0.5,0.75,1.0].map(t=>{
     let p=0,y=0;const target=fireNumber*t;
