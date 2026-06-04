@@ -11,8 +11,8 @@ Thumbs.db
 .claude/
 CLAUDE.md
 
-# Local dated snapshots created on each push (backup only — must stay out of the repo)
-website dateien/
+# Local-only working area (mirror, snapshots, archive) — never commit / never deploy
+_lokal/
 
 # Secrets / env
 .env

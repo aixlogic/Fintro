@@ -318,6 +318,23 @@
     @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
     @keyframes shimmer{0%,100%{transform:translateX(-100%)}50%{transform:translateX(100%)}}
 
+    /* ── PROGRESS EXPORT/IMPORT ── */
+    .data-tools{margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid var(--border);text-align:center}
+    .data-tools-label{display:block;font-size:.75rem;color:var(--muted);margin-bottom:.75rem}
+    .data-tools-btns{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap}
+    .data-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;padding:.5rem 1rem;border-radius:8px;cursor:pointer;transition:border-color .2s,background .2s}
+    .data-btn:hover{border-color:var(--amber);background:var(--surface2)}
+    .data-modal{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);z-index:9999;display:none;align-items:center;justify-content:center;animation:fadeIn .3s;padding:1rem}
+    .data-modal.show{display:flex}
+    .data-modal-content{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.75rem;max-width:480px;width:100%;position:relative}
+    .data-modal-close{position:absolute;top:.85rem;right:1rem;background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;font-family:'Syne',sans-serif}
+    .data-modal-close:hover{color:var(--text)}
+    .data-modal-content h3{font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--text);margin-bottom:.4rem}
+    .data-modal-content p{font-size:.83rem;color:var(--muted);line-height:1.6;margin-bottom:1rem}
+    .data-modal-text{width:100%;min-height:96px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:ui-monospace,Menlo,monospace;font-size:.75rem;padding:.75rem;resize:vertical;line-height:1.5;word-break:break-all}
+    .data-modal-msg{font-size:.8rem;font-weight:600;min-height:1.2rem;margin:.6rem 0}
+    .data-modal-actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.5rem}
+
     /* ── SMOOTH TRANSITIONS ── */
     .tab-panel{opacity:1;transition:opacity .25s ease}
     .tab-panel.fading{opacity:0}
@@ -394,6 +411,14 @@
     <p class="unit-label">Unit 5</p>
     <p class="unit-title" id="unit-title-5">The Big Picture — Life & Money</p>
     <div class="chapter-list" id="chapter-list-5"></div>
+  </div>
+
+  <div class="data-tools">
+    <span class="data-tools-label" data-i18n="progress_local">Your progress is saved on this device only — no account, no tracking.</span>
+    <div class="data-tools-btns">
+      <button class="data-btn" onclick="openExport()" data-i18n="save_progress">⤓ Save progress</button>
+      <button class="data-btn" onclick="openImport()" data-i18n="load_progress">⤒ Load progress</button>
+    </div>
   </div>
 </div>
 
@@ -1527,6 +1552,7 @@ const UI_STRINGS = {
     next:'Next →',continue_game:'Continue to Game →',retry:'Retry Quiz',
     q_label:'Question',correct_lbl:'✓ Correct',wrong_lbl:'✗ Not quite',
     done_badge:'✓ Done',start_badge:'▶ Start',correct_word:'correct',ch_short:'Ch.',
+    progress_local:'Your progress is saved on this device only — no account, no tracking.',save_progress:'⤓ Save progress',load_progress:'⤒ Load progress',
     great:'Great work!',good:'Good effort!',practice:'Keep practicing!',
     understand:'You really understand this chapter.',review:'Review the lesson and try again!'
   },
@@ -1545,6 +1571,7 @@ const UI_STRINGS = {
     next:'Weiter →',continue_game:'Zum Spiel →',retry:'Quiz wiederholen',
     q_label:'Frage',correct_lbl:'✓ Richtig',wrong_lbl:'✗ Nicht ganz',
     done_badge:'✓ Erledigt',start_badge:'▶ Start',correct_word:'richtig',ch_short:'Kap.',
+    progress_local:'Dein Fortschritt ist nur auf diesem Gerät gespeichert — kein Account, kein Tracking.',save_progress:'⤓ Fortschritt sichern',load_progress:'⤒ Fortschritt laden',
     great:'Gut gemacht!',good:'Guter Versuch!',practice:'Weiter üben!',
     understand:'Du hast dieses Kapitel wirklich verstanden.',review:'Schau dir die Lektion nochmal an!'
   }
@@ -3155,6 +3182,78 @@ function answerBCQ(idx){
   fb.innerHTML=`<div class="quiz-feedback-label">${idx===s.correct?UI_STRINGS[currentLang].correct_lbl:UI_STRINGS[currentLang].wrong_lbl}</div>${s.explain}<br><button class="btn-primary" style="margin-top:.75rem;font-size:.8rem;padding:.5rem 1.1rem" onclick="bcqState.q++;if(bcqState.q>=${BC_SCENARIOS.length})bcqState.done=true;renderBCQ()">${g('Next →','Weiter →')}</button>`;
 }
 
+// ════ PROGRESS EXPORT / IMPORT (privacy-safe — no server, no tracking) ════
+function b64encode(s){return btoa(unescape(encodeURIComponent(s)));}
+function b64decode(s){return decodeURIComponent(escape(atob(s)));}
+function buildProgressCode(){return 'FINTRO1:'+b64encode(JSON.stringify(state));}
+
+function openExport(){
+  document.getElementById('data-modal-title').textContent=g('Save your progress','Fortschritt sichern');
+  document.getElementById('data-modal-desc').textContent=g('Copy this code (or save it as a file) and keep it safe. Paste it on another device or browser to restore your XP, streak and completed chapters.','Kopiere diesen Code (oder speichere ihn als Datei) und bewahre ihn auf. Füge ihn auf einem anderen Gerät/Browser ein, um XP, Streak und abgeschlossene Kapitel wiederherzustellen.');
+  const ta=document.getElementById('data-modal-text');
+  ta.value=buildProgressCode(); ta.readOnly=true;
+  document.getElementById('data-modal-msg').textContent='';
+  document.getElementById('data-modal-actions').innerHTML=
+    `<button class="btn-primary" onclick="copyProgressCode()">${g('Copy','Kopieren')}</button>`+
+    `<button class="data-btn" onclick="downloadProgressCode()">${g('Save as file','Als Datei speichern')}</button>`+
+    `<button class="data-btn" onclick="closeDataModal()">${g('Close','Schliessen')}</button>`;
+  document.getElementById('data-modal').classList.add('show');
+}
+
+function openImport(){
+  document.getElementById('data-modal-title').textContent=g('Load progress','Fortschritt laden');
+  document.getElementById('data-modal-desc').textContent=g('Paste a previously saved code here. This replaces the progress currently on this device.','Füge hier einen zuvor gesicherten Code ein. Das ersetzt den Fortschritt, der aktuell auf diesem Gerät gespeichert ist.');
+  const ta=document.getElementById('data-modal-text');
+  ta.value=''; ta.readOnly=false; ta.placeholder='FINTRO1:...';
+  document.getElementById('data-modal-msg').textContent='';
+  document.getElementById('data-modal-actions').innerHTML=
+    `<button class="btn-primary" onclick="applyProgressCode()">${g('Load progress','Fortschritt laden')}</button>`+
+    `<button class="data-btn" onclick="closeDataModal()">${g('Cancel','Abbrechen')}</button>`;
+  document.getElementById('data-modal').classList.add('show');
+  setTimeout(()=>ta.focus(),50);
+}
+
+function closeDataModal(){document.getElementById('data-modal').classList.remove('show');}
+
+function copyProgressCode(){
+  const ta=document.getElementById('data-modal-text'),msg=document.getElementById('data-modal-msg');
+  const done=()=>{msg.style.color='var(--green)';msg.textContent=g('Copied to clipboard ✓','In Zwischenablage kopiert ✓');};
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(ta.value).then(done).catch(()=>{ta.select();document.execCommand('copy');done();});
+  } else {ta.select();document.execCommand('copy');done();}
+}
+
+function downloadProgressCode(){
+  const blob=new Blob([buildProgressCode()],{type:'text/plain'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='fintro-fortschritt.txt';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  const msg=document.getElementById('data-modal-msg');
+  msg.style.color='var(--green)';msg.textContent=g('File saved ✓','Datei gespeichert ✓');
+}
+
+function applyProgressCode(){
+  const raw=document.getElementById('data-modal-text').value.trim(),msg=document.getElementById('data-modal-msg');
+  const fail=(t)=>{msg.style.color='var(--red)';msg.textContent=t;};
+  if(!raw){fail(g('Please paste a code first.','Bitte zuerst einen Code einfügen.'));return;}
+  let payload=raw.indexOf('FINTRO1:')===0?raw.slice(8):raw;
+  let parsed;
+  try{parsed=JSON.parse(b64decode(payload));}catch(e){fail(g('Invalid or corrupted code.','Ungültiger oder beschädigter Code.'));return;}
+  if(!parsed||typeof parsed!=='object'||typeof parsed.xp!=='number'||!Array.isArray(parsed.completedChapters)){
+    fail(g('This is not a valid Fintro progress code.','Das ist kein gültiger Fintro-Fortschritts-Code.'));return;
+  }
+  if(!confirm(g('Replace the progress on this device with the loaded code?','Den Fortschritt auf diesem Gerät durch den geladenen Code ersetzen?')))return;
+  state={
+    xp:Math.max(0,parsed.xp|0),
+    completedChapters:parsed.completedChapters.filter(n=>typeof n==='number'),
+    streak:Math.max(0,parsed.streak|0),
+    lastActiveDate:typeof parsed.lastActiveDate==='string'?parsed.lastActiveDate:null
+  };
+  saveState();renderHome();
+  msg.style.color='var(--green)';msg.textContent=g('Progress loaded ✓','Fortschritt geladen ✓');
+  setTimeout(closeDataModal,900);
+}
+
 window.addEventListener('load',()=>{
   renderHome();
   const btn=document.getElementById('lang-btn');
@@ -3175,6 +3274,18 @@ window.addEventListener('resize',()=>{if(currentTab==='game'&&currentChapter?.ga
     <div class="completion-buttons">
       <button class="btn-primary" onclick="closeCompletionModal()">Continue →</button>
     </div>
+  </div>
+</div>
+
+<!-- Progress Export/Import Modal -->
+<div class="data-modal" id="data-modal">
+  <div class="data-modal-content">
+    <button class="data-modal-close" onclick="closeDataModal()" aria-label="Close">✕</button>
+    <h3 id="data-modal-title"></h3>
+    <p id="data-modal-desc"></p>
+    <textarea id="data-modal-text" class="data-modal-text" spellcheck="false" autocomplete="off"></textarea>
+    <div class="data-modal-msg" id="data-modal-msg"></div>
+    <div class="data-modal-actions" id="data-modal-actions"></div>
   </div>
 </div>
 
