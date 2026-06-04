@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Fintro">
+  <rect width="100" height="100" rx="22" fill="#f59e0b"/>
+  <text x="50" y="54" text-anchor="middle" dominant-baseline="central"
+        font-family="'Syne', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
+        font-size="66" font-weight="800" fill="#0a0c10">f</text>
+</svg>
