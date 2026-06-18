@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fintro — Finanzbildung für Jugendliche</title>
+<meta name="description" content="Fintro bringt dir echte Finanzen bei — Schritt für Schritt, mit interaktiven Charts, Quizzen und 19 Spielen. Gebaut von einem 14-Jährigen. Kostenlos." />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/design.css" />
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<style>
+  /* Feines Korn gegen steriles Weiß (Premium-Textur) */
+  .grain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  /* Mesh-Glows */
+  .mesh{position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:radial-gradient(46% 38% at 88% -8%, #10b9811f, transparent 60%),
+              radial-gradient(40% 34% at -4% 8%, #2f6df016, transparent 60%),
+              radial-gradient(50% 40% at 70% 112%, #7c5cff12, transparent 60%)}
+  main{position:relative;z-index:1}
+  .hero{display:grid;grid-template-columns:1.06fr .94fr;gap:3.2rem;align-items:center;padding:8.5rem 0 4.5rem}
+  .pill{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--font-display);font-size:.76rem;font-weight:600;color:var(--green-d);background:var(--green-soft);border:1px solid #10b9812e;padding:.4rem .85rem;border-radius:999px;margin-bottom:1.5rem}
+  .pill::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px #10b98133;animation:pulse 2.4s var(--ease) infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 3px #10b98133}50%{box-shadow:0 0 0 6px #10b9811a}}
+  .hero h1{font-size:clamp(2.7rem,5.6vw,4.4rem);line-height:1.04;letter-spacing:-.03em;margin-bottom:1.2rem}
+  .hero h1 .g{color:var(--green-d)}
+  .hero .subline{font-size:1.16rem;color:var(--muted);max-width:36ch;margin-bottom:2rem}
+  .hero-actions{display:flex;gap:.9rem;flex-wrap:wrap;margin-bottom:2.2rem}
+  .btn-primary{background:linear-gradient(180deg,#19c98e,#0e9f6e);box-shadow:0 8px 22px -8px #10b981aa,inset 0 1px 0 #ffffff55}
+  .trust-pills{display:flex;gap:.5rem;flex-wrap:wrap}
+  .tp{font-family:var(--font-display);font-size:.78rem;font-weight:600;color:var(--ink);background:var(--surface);border:1px solid var(--line-2);padding:.4rem .8rem;border-radius:999px;box-shadow:var(--sh-sm)}
+  .tp b{color:var(--green-d)}
+
+  /* Hero: lebendige Produkt-Karte */
+  .hero-card-wrap{position:relative}
+  .hero-glow{position:absolute;inset:-8% -6% -12% -6%;background:radial-gradient(60% 55% at 70% 30%,#10b98133,transparent 70%);filter:blur(8px);z-index:-1}
+  .hero-card{background:linear-gradient(180deg,#ffffff,#fbfdff);border:1px solid var(--line-2);border-radius:var(--r-xl);box-shadow:var(--sh-lg);padding:1.4rem;animation:floaty 7s ease-in-out infinite}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+  .hc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem}
+  .hc-top .lab{font-family:var(--font-display);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .hc-top .live{font-family:var(--font-display);font-size:.72rem;color:var(--green-d);display:flex;align-items:center;gap:.4rem}
+  .hc-top .live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green)}
+  .hc-num{font-family:var(--font-display);font-weight:700;font-size:1.9rem;line-height:1}
+  .hc-num small{font-size:.82rem;color:var(--muted);font-weight:500}
+  .hc-mini-ctrl{display:flex;align-items:center;gap:.7rem;margin-top:.9rem;padding-top:.9rem;border-top:1px solid var(--line)}
+  .hc-mini-ctrl label{font-family:var(--font-display);font-size:.72rem;color:var(--muted);white-space:nowrap}
+  .hc-mini-ctrl b{font-family:var(--font-display);color:var(--green-d)}
+  .hc-mini-ctrl input{flex:1}
+
+  section{padding:5rem 0;position:relative}
+  .sec-label{font-family:var(--font-display);font-size:.74rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--green-d);margin-bottom:.7rem}
+  .sec-h{font-size:clamp(1.9rem,3.8vw,2.8rem);line-height:1.1;letter-spacing:-.02em;max-width:18ch}
+  .sec-head{margin-bottom:2.6rem}
+
+  /* Trust band */
+  .band{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;padding:1.6rem 0;border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)}
+  .band .n{font-family:var(--font-display);font-weight:700;font-size:2.3rem;line-height:1}
+  .band .l{font-size:.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:.25rem}
+  .band > div:nth-child(1) .n{color:var(--u1)} .band > div:nth-child(2) .n{color:var(--u2)} .band > div:nth-child(3) .n{color:var(--u3)} .band > div:nth-child(4) .n{color:var(--u4)}
+
+  /* Why cards */
+  .why{display:grid;grid-template-columns:repeat(2,1fr);gap:1.1rem}
+  .wcard{background:linear-gradient(180deg,var(--surface),#fbfcfe);border:1px solid var(--line-2);border-radius:var(--r-lg);padding:1.7rem;box-shadow:var(--sh-sm);transition:transform .25s var(--ease),box-shadow .25s}
+  .wcard:hover{transform:translateY(-5px);box-shadow:var(--sh)}
+  .wcard .ic{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;margin-bottom:1.1rem;box-shadow:var(--sh-sm)}
+  .wcard .ic svg{width:24px;height:24px}
+  .wcard h3{font-size:1.2rem;margin-bottom:.4rem}
+  .wcard p{color:var(--muted);font-size:.93rem}
+
+  /* How it works — Signature 3-Schritt */
+  .how{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem}
+  .step3{background:var(--surface);border:1px solid var(--line-2);border-radius:var(--r-lg);padding:1.6rem;box-shadow:var(--sh-sm);position:relative}
+  .step3 .no{font-family:var(--font-display);font-weight:700;font-size:.8rem;color:var(--green-d);background:var(--green-soft);width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:1rem}
+  .step3 h4{font-family:var(--font-display);font-size:1.1rem;margin-bottom:.35rem}
+  .step3 p{color:var(--muted);font-size:.9rem}
+
+  /* Curriculum (Units, farbig) */
+  .curr{display:flex;flex-direction:column;gap:.7rem}
+  .crow{display:flex;align-items:center;gap:1.2rem;background:var(--surface);border:1px solid var(--line-2);border-radius:var(--r-lg);padding:1.05rem 1.4rem;text-decoration:none;color:inherit;box-shadow:var(--sh-sm);transition:transform .2s var(--ease),box-shadow .2s}
+  .crow:hover{transform:translateX(6px);box-shadow:var(--sh)}
+  .crow .badge{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:1.2rem;color:#fff;flex-shrink:0}
+  .crow .ci{flex:1}.crow .ci b{font-family:var(--font-display);font-size:1.02rem}.crow .ci span{display:block;font-size:.84rem;color:var(--muted)}
+  .crow .go{font-family:var(--font-display);color:var(--muted)}
+
+  /* Founder */
+  .founder{display:grid;grid-template-columns:auto 1fr;gap:1.6rem;align-items:center;background:linear-gradient(115deg,#0e1626,#1a2740);color:#fff;border-radius:var(--r-xl);padding:2.4rem;box-shadow:var(--sh-lg);position:relative;overflow:hidden}
+  .founder::after{content:"";position:absolute;right:-40px;top:-50px;width:220px;height:220px;background:radial-gradient(circle,#10b98133,transparent 65%)}
+  .founder .ava{width:84px;height:84px;border-radius:20px;background:#26344f;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:1.8rem;color:#7fe9c4;flex-shrink:0;position:relative}
+  .founder q{font-family:var(--font-display);font-weight:600;font-size:1.35rem;line-height:1.4;display:block;position:relative}
+  .founder .by{color:#aeb9cc;font-size:.88rem;margin-top:.9rem;position:relative}
+
+  /* CTA */
+  .cta{text-align:center;background:linear-gradient(180deg,var(--surface),#f1f5f4);border:1px solid var(--line-2);border-radius:var(--r-xl);padding:4.2rem 2rem;box-shadow:var(--sh-sm);position:relative;overflow:hidden}
+  .cta::before{content:"";position:absolute;inset:0;background:radial-gradient(50% 80% at 50% -10%,#10b98114,transparent 60%)}
+  .cta h2{font-size:clamp(2rem,4vw,3rem);margin-bottom:1rem;position:relative}
+  .cta p{color:var(--muted);margin-bottom:2rem;position:relative}
+
+  footer{padding:3rem 0 2rem;border-top:1px solid var(--line-2);text-align:center;color:var(--muted);font-size:.85rem;position:relative;z-index:1}
+  footer .logo{font-family:var(--font-display);font-weight:700;font-size:1.1rem;color:var(--ink);display:inline-block;margin-bottom:.5rem}
+  footer .logo span{color:var(--green)}
+
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+
+  @media(max-width:860px){.hero{grid-template-columns:1fr;padding-top:7rem;gap:2.4rem}.why,.how{grid-template-columns:1fr}.band{grid-template-columns:1fr 1fr}.founder{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="grain"></div><div class="mesh"></div>
+
+<nav class="nav">
+  <a class="logo" href="index-v2.html">fin<span>tro</span></a>
+  <div class="links">
+    <a href="index-v2.html">Start</a>
+    <a href="about.html">Über mich</a>
+    <a href="https://invest-multiplayer.netlify.app" target="_blank" rel="noopener">Invest Multiplayer</a>
+    <a class="btn btn-primary" href="learn-v2.html" style="padding:.55rem 1.1rem">Loslegen</a>
+  </div>
+</nav>
+
+<main class="wrap">
+  <!-- HERO -->
+  <header class="hero">
+    <div>
+      <span class="pill">Finanzbildung für Jugendliche</span>
+      <h1>Geld verstehen.<br><span class="g">Schritt für Schritt.</span></h1>
+      <p class="subline">Echte Finanzen in Lektionen, Quizzen und 19 Spielen. Mit interaktiven Charts, die du selbst bewegst. Gebaut von einem 14-Jährigen. Kostenlos, für immer.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="learn-v2.html">Kostenlos starten →</a>
+        <a class="btn btn-ghost" href="about.html">Wer steckt dahinter?</a>
+      </div>
+      <div class="trust-pills">
+        <span class="tp"><b>19</b> Kapitel</span><span class="tp"><b>19</b> Spiele</span><span class="tp">DE · EN</span><span class="tp"><b>0 €</b> für immer</span>
+      </div>
+    </div>
+    <div class="hero-card-wrap">
+      <div class="hero-glow"></div>
+      <div class="hero-card">
+        <div class="hc-top"><span class="lab">Zinseszins · CHF 1.000 bei 8 %</span><span class="live">live</span></div>
+        <div class="hc-num" id="hc-final">CHF 0 <small>nach 30 Jahren</small></div>
+        <div id="hero-chart"></div>
+        <div class="hc-mini-ctrl"><label>Laufzeit <b id="hc-lt">30 J</b></label><input id="hc-t" type="range" min="5" max="40" step="1" value="30"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- TRUST -->
+  <div class="band reveal">
+    <div><div class="n" data-count="19">0</div><div class="l">Kapitel</div></div>
+    <div><div class="n" data-count="19">0</div><div class="l">eigene Spiele</div></div>
+    <div><div class="n">DE·EN</div><div class="l">zweisprachig</div></div>
+    <div><div class="n">0 €</div><div class="l">für immer</div></div>
+  </div>
+
+  <!-- WHY -->
+  <section class="reveal">
+    <div class="sec-head"><div class="sec-label">Warum Fintro</div><h2 class="sec-h">Schulen lehren Geschichte. Niemand lehrt <span style="color:var(--green-d)">Geld.</span></h2></div>
+    <div class="why">
+      <div class="wcard"><div class="ic" style="background:var(--u1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11a1.5 1.5 0 0 1 1.5 1.5V20a1 1 0 0 0-1-1H5.5A1.5 1.5 0 0 1 4 17.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13a1.5 1.5 0 0 0-1.5 1.5V20a1 1 0 0 1 1-1h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg></div><h3>Für Jugendliche gemacht</h3><p>Direkt, ehrlich, echt. Kein Lehrbuch-Ton, sondern so, wie du wirklich denkst.</p></div>
+      <div class="wcard"><div class="ic" style="background:var(--u2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 9l5 3-5 3z" fill="currentColor"/></svg></div><h3>Lernen durch Handeln</h3><p>Jedes Kapitel endet mit einem echten Spiel und Charts, die du selbst bewegst.</p></div>
+      <div class="wcard"><div class="ic" style="background:var(--u4)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0l-7.2-7.2A2 2 0 0 1 3 12V5a2 2 0 0 1 2-2h7a2 2 0 0 1 1.4.6l7.2 7.2a2 2 0 0 1 0 2.6z"/><circle cx="8" cy="8" r="1.3"/></svg></div><h3>Immer kostenlos</h3><p>Finanzbildung sollte kein Geld kosten. Für alle, für immer.</p></div>
+      <div class="wcard"><div class="ic" style="background:var(--u3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg></div><h3>Echte Themen</h3><p>Steuern, Schulden, Versicherung, Investieren. Was wirklich zählt.</p></div>
+    </div>
+  </section>
+
+  <!-- HOW -->
+  <section class="reveal">
+    <div class="sec-head"><div class="sec-label">So läuft's</div><h2 class="sec-h">Verstehen. Spielen. Behalten.</h2></div>
+    <div class="how">
+      <div class="step3"><div class="no">1</div><h4>Schritt für Schritt</h4><p>Ein Konzept pro Schritt, visuell erklärt. Kein Wall-of-Text.</p></div>
+      <div class="step3"><div class="no">2</div><h4>Selbst ausprobieren</h4><p>Interaktive Charts und ein Spiel pro Kapitel. Du machst, statt nur zu lesen.</p></div>
+      <div class="step3"><div class="no">3</div><h4>Dranbleiben</h4><p>XP, Streak und Fortschritt halten dich am Ball. Dein Stand bleibt bei dir.</p></div>
+    </div>
+  </section>
+
+  <!-- CURRICULUM -->
+  <section class="reveal">
+    <div class="sec-head"><div class="sec-label">Der Weg</div><h2 class="sec-h">Fünf Einheiten. Alles was zählt.</h2></div>
+    <div class="curr">
+      <a class="crow" href="learn-v2.html"><div class="badge" style="background:var(--u1)">1</div><div class="ci"><b>Das Fundament</b><span>Geld, Zinseszins, Einkommen & Verdienen</span></div><span class="go">→</span></a>
+      <a class="crow" href="learn-v2.html"><div class="badge" style="background:var(--u2)">2</div><div class="ci"><b>Management</b><span>Budgetierung, Banking, Schulden, Notfallpuffer</span></div><span class="go">→</span></a>
+      <a class="crow" href="learn-v2.html"><div class="badge" style="background:var(--u3)">3</div><div class="ci"><b>Schutz</b><span>Steuern, Versicherung, Risiko, Betrug</span></div><span class="go">→</span></a>
+      <a class="crow" href="learn-v2.html"><div class="badge" style="background:var(--u4)">4</div><div class="ci"><b>Wachstum</b><span>Aktien, ETFs, Immobilien, Krypto, Psychologie</span></div><span class="go">→</span></a>
+      <a class="crow" href="learn-v2.html"><div class="badge" style="background:var(--u5)">5</div><div class="ci"><b>Das grosse Bild</b><span>Unternehmertum, Weltwirtschaft, deine Zukunft</span></div><span class="go">→</span></a>
+    </div>
+  </section>
+
+  <!-- FOUNDER -->
+  <section class="reveal">
+    <div class="founder">
+      <div class="ava">LF</div>
+      <div><q>Geld ist eine der wichtigsten Fähigkeiten im Leben. Und niemand bringt sie dir bei. Also habe ich Fintro gebaut.</q><div class="by">— Louis, 14 · Kanton Schwyz · Gründer von Fintro</div></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="reveal">
+    <div class="cta">
+      <h2>Die meisten wünschten, sie hätten das <span style="color:var(--green-d)">mit 14 gelernt.</span></h2>
+      <p>Du kannst es noch. Unit 1 dauert ca. 20 Minuten. Kostenlos.</p>
+      <a class="btn btn-primary" href="learn-v2.html">Jetzt starten →</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span class="logo">fin<span>tro</span></span>
+  <p>Gebaut von Louis, 14 · Kanton Schwyz, Schweiz · © 2026 · Kostenlos für immer</p>
+</footer>
+
+<script>
+/* Reveal beim Scrollen */
+const io = new IntersectionObserver((es)=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); countup(e.target); io.unobserve(e.target); } }),{threshold:.18});
+document.querySelectorAll(".reveal").forEach(r=>io.observe(r));
+function countup(scope){
+  scope.querySelectorAll("[data-count]").forEach(n=>{
+    const target=+n.dataset.count, t0=performance.now();
+    (function step(now){ const k=Math.min(1,(now-t0)/900),e=1-Math.pow(1-k,3); n.textContent=Math.round(target*e); if(k<1)requestAnimationFrame(step); })(performance.now());
+  });
+}
+
+/* Hero-Chart (animiert beim Laden, ruckelfrei beim Ziehen) */
+const fmt = n => "CHF " + Math.round(n).toLocaleString("de-CH");
+const el = id => document.getElementById(id);
+let hChart=null, hPrev=0, hRaf=null;
+function hSeries(){
+  const P=1000, r=.08, t=+el("hc-t").value; el("hc-lt").textContent=t+" J";
+  const N=Math.max(80,t*6), comp=[], simp=[];
+  for(let i=0;i<=N;i++){ const x=t*i/N; comp.push({x:x,y:P*Math.pow(1+r,x)}); simp.push({x:x,y:P*(1+r*x)}); }
+  return {comp,simp};
+}
+function hCount(target){ const s=hPrev,t0=performance.now(); (function st(now){ const k=Math.min(1,(now-t0)/900),e=1-Math.pow(1-k,3); el("hc-final").innerHTML=fmt(s+(target-s)*e)+' <small>nach '+el("hc-t").value+' Jahren</small>'; if(k<1)requestAnimationFrame(st); })(performance.now()); hPrev=target; }
+function hUpdate(drawIn){
+  const {comp,simp}=hSeries();
+  hChart.updateSeries([{name:"Zinseszins",data:comp},{name:"Einfacher Zins",data:simp}], drawIn);
+  const cf=comp[comp.length-1].y; if(drawIn) hCount(cf); else { el("hc-final").innerHTML=fmt(cf)+' <small>nach '+el("hc-t").value+' Jahren</small>'; hPrev=cf; }
+}
+hChart=new ApexCharts(el("hero-chart"),{
+  chart:{type:"area",height:200,fontFamily:"Inter,sans-serif",toolbar:{show:false},animations:{enabled:true,easing:"easeinout",speed:1100}},
+  series:[{name:"Zinseszins",data:[]},{name:"Einfacher Zins",data:[]}],
+  colors:["#10b981","#cdd4df"], stroke:{curve:"straight",width:[3,1.6]},
+  fill:{type:["gradient","solid"],opacity:[1,0],gradient:{shadeIntensity:.4,opacityFrom:.32,opacityTo:.02,stops:[0,95]}},
+  markers:{size:0,hover:{size:0}},
+  xaxis:{type:"numeric",tickAmount:5,decimalsInFloat:0,labels:{formatter:v=>"J"+Math.round(v),style:{colors:"#8b95a6",fontFamily:"Space Grotesk",fontSize:"10px"}},axisBorder:{show:false},axisTicks:{show:false}},
+  yaxis:{labels:{formatter:v=>v>=1000?Math.round(v/1000)+"k":Math.round(v),style:{colors:"#8b95a6",fontFamily:"Space Grotesk",fontSize:"10px"}}},
+  grid:{borderColor:"#0c132212",strokeDashArray:4,padding:{left:4,right:4,top:-6}},
+  legend:{show:false}, dataLabels:{enabled:false},
+  tooltip:{theme:"light",style:{fontFamily:"Space Grotesk",fontSize:"11px"},x:{formatter:v=>"Jahr "+Math.round(v)},y:{formatter:v=>fmt(v)}}
+});
+hChart.render();
+setTimeout(()=>hUpdate(true),250);
+el("hc-t").addEventListener("input",()=>{ if(hRaf)return; hRaf=requestAnimationFrame(()=>{ hRaf=null; hUpdate(false); }); });
+</script>
+</body>
+</html>
