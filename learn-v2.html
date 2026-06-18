@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fintro v2 — Lernen</title>
+<meta name="description" content="Fintro — Finanzbildung für Jugendliche, Schritt für Schritt." />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/design.css" />
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<style>
+  body{padding-bottom:5rem}
+  .lesson-wrap{max-width:var(--readw);margin:0 auto;padding:1.7rem 1.5rem}
+  .tabs{margin-bottom:1.8rem}
+  .foot-note{margin-top:1.2rem;text-align:center;font-family:var(--font-display);font-size:.7rem;color:var(--faint)}
+</style>
+</head>
+<body>
+
+<!-- App-Statusleiste -->
+<header class="statusbar">
+  <div class="inner">
+    <a class="logo" href="index.html">fin<span>tro</span></a>
+    <span class="sp"></span>
+    <span>XP <b id="xp">2.450</b></span>
+    <span class="up" id="streak">▲ 7-Tage</span>
+    <span><b id="chprog">42%</b> <span style="color:var(--faint)">Kapitel</span></span>
+  </div>
+  <div class="progressbar"><i id="prog" style="width:25%"></i></div>
+</header>
+
+<main class="lesson-wrap">
+  <div class="lesson-meta" id="ch-meta">Unit 01 · Kapitel 02</div>
+  <h1 class="lesson-title" id="ch-title">Zinseszins</h1>
+  <div class="lesson-sub" id="ch-sub">…</div>
+
+  <div class="tabs" role="tablist" aria-label="Kapitel-Bereiche">
+    <button class="tab" role="tab" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11a1.5 1.5 0 0 1 1.5 1.5V20a1 1 0 0 0-1-1H5.5A1.5 1.5 0 0 1 4 17.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13a1.5 1.5 0 0 0-1.5 1.5V20a1 1 0 0 1 1-1h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg>Lektion</button>
+    <button class="tab" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M7 9h6M7 13h10"/></svg>Vokabeln</button>
+    <button class="tab" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l4.5 4.5L20 6"/></svg>Quiz</button>
+    <button class="tab" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 9l5 3-5 3z" fill="currentColor"/></svg>Spiel</button>
+  </div>
+
+  <div id="lesson"></div>
+  <div class="foot-note">Fintro v2 · datengetrieben · Schritt-für-Schritt · interaktive Charts</div>
+</main>
+
+<script>
+/* ─────────────────────────────────────────────────────────────
+   KAPITEL-DATEN (Vorlage: jeder weitere Kapitel ist nur Daten)
+   Jeder Step: {phase, title, lead?, blocks:[…]}
+   Block-Typen: def | two | compoundChart | take | statCompare | note | insights
+   ───────────────────────────────────────────────────────────── */
+const CHAPTERS = {
+  2:{ unit:1, title:"Zinseszins", sub:"Die stille Kraft, die Vermögen aufbaut. Oder zerstört.",
+    steps:[
+      { phase:"Erklärung", title:"Was ist Zinseszins?",
+        lead:"Du legst CHF 1.000 an, 8 % im Jahr. Macht CHF 80. Klar. Jetzt die Frage, auf die alles ankommt: Wo landen diese 80 Franken?",
+        blocks:[
+          {type:"def", html:"<b>Zinseszins</b> = Zinsen auf dein Kapital UND auf die Zinsen, die du schon verdient hast. Dein Geld verdient Geld auf sich selbst."},
+          {type:"two", items:[
+            {cls:"s", t:"Einfacher Zins", p:"Die 80 bleiben separat. Jedes Jahr wieder 8 % von 1.000 = 80. Die Basis wächst nie."},
+            {cls:"c", t:"Zinseszins", p:"Die 80 kommen dazu. Nächstes Jahr 8 % von 1.080. Die Basis wächst jedes Jahr. Das ist der Schneeball."}
+          ]}
+        ]},
+      { phase:"Vertiefung", title:"Wie schnell wächst es wirklich?",
+        lead:"Gleicher Einsatz, gleicher Zins. Einziger Unterschied: bleiben die Zinsen liegen oder nicht? Zieh an den Reglern und schau, wie weit die Kurven auseinanderlaufen.",
+        blocks:[
+          {type:"compoundChart"},
+          {type:"take", html:"Nach 30 Jahren bringt Zinseszins oft das <b>Fünffache</b> des einfachen Zinses. Nur weil die Zinsen liegen bleiben und selbst Zinsen verdienen."}
+        ]},
+      { phase:"Kontext", title:"Im echten Leben",
+        lead:"Das ist nicht nur Theorie. Zinseszins entscheidet, wie viel du mit 60 hast. Und er läuft in beide Richtungen.",
+        blocks:[
+          {type:"statCompare", lab:"Früh vs. spät · CHF 200/Monat bei 7 %",
+            a:{v:"~CHF 680k", s:"Alex startet mit 17"}, b:{v:"~CHF 370k", s:"Jordan startet mit 27"},
+            note:"10 Jahre Vorsprung, fast doppelt so viel mit 60. Gleicher Betrag, gleicher Zins. Die Jahre holst du nie wieder auf."},
+          {type:"note", k:"Andere Richtung", html:"Dieselbe Kraft frisst dich, wenn du Schulden hast. Kreditkarte mit 20 % Zinsen: aus CHF 1.000 werden in 5 Jahren CHF 2.500. Lektion: immer voll zahlen."}
+        ]},
+      { phase:"Erkenntnisse", title:"3 Dinge zum Merken",
+        blocks:[
+          {type:"insights", items:[
+            {n:"1", t:"Zinseszins schlägt einfachen Zins, aber erst mit Zeit.", p:"Im ersten Jahr kaum ein Unterschied. Nach 30 Jahren das Fünffache. Geduld ist der ganze Trick."},
+            {n:"2", t:"Schulden wachsen genauso.", p:"Gleiche Mathe, andere Richtung. Eine 20%-Kreditkarte nutzt exakt denselben Effekt wie dein Sparkonto, nur gegen dich."},
+            {n:"★", key:true, t:"Zeit kannst du nicht zurückkaufen.", p:"Jedes Jahr, das du wartest, kostet mehr als das Jahr davor. Fang jetzt an, egal mit wie wenig."}
+          ]}
+        ]}
+    ]}
+};
+
+/* ─── Block-Renderer (Daten → HTML) ─── */
+const esc = s => s; // Inhalt ist von uns, kein User-Input
+function renderBlock(b){
+  switch(b.type){
+    case "def":  return `<div class="def">${b.html}</div>`;
+    case "two":  return `<div class="two">${b.items.map(i=>`<div class="mini ${i.cls}"><div class="t">${i.t}</div><p>${i.p}</p></div>`).join("")}</div>`;
+    case "take": return `<div class="take"><div><span class="k">Zum Merken</span>${b.html}</div></div>`;
+    case "note": return `<div class="note-card"><span class="k">${b.k}</span>${b.html}</div>`;
+    case "statCompare": return `<div class="statcard"><div class="lab">${b.lab}</div><div class="statrow"><div class="s win"><b>${b.a.v}</b><span>${b.a.s}</span></div><div class="s lose"><b>${b.b.v}</b><span>${b.b.s}</span></div></div><p style="font-size:.86rem;color:#4a5365;margin-top:.8rem">${b.note}</p></div>`;
+    case "insights": return b.items.map(i=>`<div class="ins ${i.key?'key':''}"><div class="n">${i.n}</div><div class="t"><b>${i.t}</b><p>${i.p}</p></div></div>`).join("");
+    case "compoundChart": return `
+      <div class="chart-head"><div class="big" id="cc-final">CHF 0</div><div class="pill" id="cc-mult">× 0</div></div>
+      <div id="cc-chart"></div>
+      <div class="ctrls">
+        <div class="ctrl"><label class="cl" for="cc-p"><span>Startbetrag</span><b id="cc-lp">CHF 1.000</b></label><input id="cc-p" type="range" min="500" max="20000" step="500" value="1000"></div>
+        <div class="ctrl"><label class="cl" for="cc-r"><span>Zinssatz / Jahr</span><b id="cc-lr">8%</b></label><input id="cc-r" type="range" min="1" max="15" step="1" value="8"></div>
+        <div class="ctrl" style="grid-column:1/-1"><label class="cl" for="cc-t"><span>Laufzeit</span><b id="cc-lt">30 Jahre</b></label><input id="cc-t" type="range" min="5" max="40" step="1" value="30"></div>
+      </div>`;
+    default: return "";
+  }
+}
+
+/* ─── Lektion rendern ─── */
+const el = id => document.getElementById(id);
+let cur = 0, total = 0, hasChart = false;
+
+function renderLesson(chId){
+  const ch = CHAPTERS[chId];
+  el("ch-meta").textContent = `Unit ${String(ch.unit).padStart(2,'0')} · Kapitel ${String(chId).padStart(2,'0')}`;
+  el("ch-title").textContent = ch.title;
+  el("ch-sub").textContent = ch.sub;
+  total = ch.steps.length;
+  el("lesson").innerHTML = ch.steps.map((s,i)=>{
+    const dots = ch.steps.map((_,j)=>`<span class="dot ${j<i?'done':j===i?'on':''}"></span>`).join("");
+    const last = i===total-1;
+    return `<section class="step" data-step="${i}" ${i===0?'':'hidden'}>
+      <div class="step-head"><span class="phase">${s.phase}</span><div class="dots">${dots}</div></div>
+      <div class="step-body">
+        <h2>${s.title}</h2>
+        ${s.lead?`<p class="lead">${s.lead}</p>`:""}
+        ${s.blocks.map(renderBlock).join("")}
+      </div>
+      <div class="step-nav">
+        <button class="btn-text" data-back ${i===0?'style="visibility:hidden"':''}>← Zurück</button>
+        <span class="step-count">Schritt ${i+1} / ${total}</span>
+        <button class="btn btn-primary" data-next>${last?'Zum Quiz →':'Weiter →'}</button>
+      </div>
+    </section>`;
+  }).join("");
+  el("lesson").querySelectorAll("[data-next]").forEach(b=>b.onclick=()=>{ if(cur<total-1) showStep(cur+1); });
+  el("lesson").querySelectorAll("[data-back]").forEach(b=>b.onclick=()=>{ if(cur>0) showStep(cur-1); });
+  showStep(0);
+}
+function showStep(i){
+  cur = i;
+  document.querySelectorAll(".step").forEach(s=>{ s.hidden = (+s.dataset.step !== i); });
+  el("prog").style.width = ((i+1)/total*100) + "%";
+  if(document.getElementById("cc-chart") && !hasChart && !document.querySelector(`.step[data-step="${i}"]`).hidden && document.querySelector(`.step[data-step="${i}"]`).contains(document.getElementById("cc-chart"))) initCompoundChart();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+/* ─── Interaktiver Zinseszins-Chart (ApexCharts) ─── */
+const fmt = n => "CHF " + Math.round(n).toLocaleString("de-CH");
+let ccChart=null, ccPrev=0, ccRaf=null;
+function ccSeries(){
+  const P=+el("cc-p").value, r=+el("cc-r").value/100, t=+el("cc-t").value;
+  el("cc-lp").textContent="CHF "+P.toLocaleString("de-CH"); el("cc-lr").textContent=(r*100).toFixed(0)+"%"; el("cc-lt").textContent=t+" Jahre";
+  const N=Math.max(80,t*6), comp=[], simp=[];
+  for(let i=0;i<=N;i++){ const x=t*i/N; comp.push({x:x,y:P*Math.pow(1+r,x)}); simp.push({x:x,y:P*(1+r*x)}); }
+  return {comp,simp};
+}
+function ccCountUp(target){ const s=ccPrev,t0=performance.now(); (function step(now){ const k=Math.min(1,(now-t0)/650),e=1-Math.pow(1-k,3); el("cc-final").innerHTML=fmt(s+(target-s)*e)+' <small>Endkapital</small>'; if(k<1)requestAnimationFrame(step); })(performance.now()); ccPrev=target; }
+function ccUpdate(anim){
+  const {comp,simp}=ccSeries();
+  ccChart.updateSeries([{name:"Zinseszins",data:comp},{name:"Einfacher Zins",data:simp}],false);
+  const cf=comp[comp.length-1].y, sf=simp[simp.length-1].y;
+  if(anim) ccCountUp(cf); else { el("cc-final").innerHTML=fmt(cf)+' <small>Endkapital</small>'; ccPrev=cf; }
+  el("cc-mult").textContent="× "+(cf/sf).toFixed(1)+" vs. einfach";
+}
+function initCompoundChart(){
+  if(ccChart) return; hasChart=true;
+  ccChart=new ApexCharts(el("cc-chart"),{
+    chart:{type:"area",height:270,fontFamily:"Inter,sans-serif",toolbar:{show:false},animations:{enabled:false}},
+    series:[{name:"Zinseszins",data:[]},{name:"Einfacher Zins",data:[]}],
+    colors:["#10b981","#c3cad6"], stroke:{curve:"straight",width:[3.5,2]},
+    fill:{type:["gradient","solid"],opacity:[1,0],gradient:{shadeIntensity:.4,opacityFrom:.3,opacityTo:.02,stops:[0,95]}},
+    markers:{size:0,hover:{size:0}},
+    xaxis:{type:"numeric",tickAmount:6,decimalsInFloat:0,labels:{formatter:v=>"J"+Math.round(v),style:{colors:"#8b95a6",fontFamily:"Space Grotesk",fontSize:"11px"}},axisBorder:{show:false},axisTicks:{show:false}},
+    yaxis:{labels:{formatter:v=>v>=1000?Math.round(v/1000)+"k":Math.round(v),style:{colors:"#8b95a6",fontFamily:"Space Grotesk",fontSize:"11px"}}},
+    grid:{borderColor:"#0c132212",strokeDashArray:4,padding:{left:6,right:6,top:0}},
+    legend:{position:"top",horizontalAlign:"right",fontFamily:"Space Grotesk",fontSize:"12px",labels:{colors:"#5a6678"},markers:{radius:4}},
+    dataLabels:{enabled:false},
+    tooltip:{theme:"light",style:{fontFamily:"Space Grotesk",fontSize:"12px"},x:{formatter:v=>"Jahr "+Math.round(v)},y:{formatter:v=>fmt(v)}}
+  });
+  ccChart.render();
+  ["cc-p","cc-r","cc-t"].forEach(id=>el(id).addEventListener("input",()=>{ if(ccRaf)return; ccRaf=requestAnimationFrame(()=>{ ccRaf=null; ccUpdate(false); }); }));
+  setTimeout(()=>ccUpdate(true),120);
+}
+
+renderLesson(2);
+</script>
+</body>
+</html>

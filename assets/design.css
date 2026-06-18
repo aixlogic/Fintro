@@ -1,0 +1,148 @@
+/* ============================================================
+   Fintro v2 — Design System  (Richtung "L3 — Fresh Product")
+   Eine Quelle für Farben, Typo, Abstände, Komponenten.
+   Wird von allen Seiten genutzt (kein dupliziertes Inline-CSS).
+   ============================================================ */
+
+:root{
+  /* — Farben — */
+  --bg:#f5f7f9; --surface:#ffffff; --soft:#eef1f4;
+  --ink:#0c1322; --muted:#5a6678; --faint:#8b95a6;
+  --line:#0c132212; --line-2:#0c13221c;
+  --green:#10b981; --green-d:#0c9268; --green-soft:#10b98114;
+  --blue:#2f6df0; --blue-d:#1f54c8;
+  --red:#e5484d; --amber:#f59e0b;
+  /* — Schrift — */
+  --font-display:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  /* — Abstände (4px-System) — */
+  --s1:.25rem; --s2:.5rem; --s3:.75rem; --s4:1rem; --s5:1.5rem; --s6:2rem; --s7:3rem; --s8:4rem; --s9:6rem;
+  /* — Radius / Schatten / Motion — */
+  --r:12px; --r-lg:18px; --r-xl:28px;
+  --sh-sm:0 1px 2px rgba(12,19,34,.05),0 4px 12px -5px rgba(12,19,34,.08);
+  --sh:0 2px 6px rgba(12,19,34,.05),0 22px 44px -16px rgba(12,19,34,.16);
+  --sh-lg:0 4px 10px rgba(12,19,34,.06),0 36px 70px -22px rgba(12,19,34,.22);
+  --ease:cubic-bezier(.22,.7,.3,1);
+  --maxw:1080px; --readw:720px;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;line-height:1.1;letter-spacing:-.02em}
+p{color:inherit}
+a{color:inherit}
+.gs{font-family:var(--font-display)}
+.mono-nums{font-family:var(--font-display);font-feature-settings:"tnum" 1}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 1.8rem}
+.read{max-width:var(--readw);margin:0 auto;padding:0 1.5rem}
+.accent{color:var(--green-d)}
+
+/* — Fokus (Barrierefreiheit) — sichtbar für Tastatur, dezent für Maus — */
+:focus-visible{outline:2.5px solid var(--blue);outline-offset:2px;border-radius:6px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* — Buttons (echte <button>/<a>, tastaturbedienbar) — */
+.btn{font-family:var(--font-display);font-weight:600;border:none;cursor:pointer;text-decoration:none;
+  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;border-radius:10px;
+  transition:transform .14s var(--ease),box-shadow .2s var(--ease),background .2s}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--green);color:#04231a;padding:.78rem 1.4rem;font-size:.92rem;box-shadow:0 6px 16px -7px #10b98199}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 24px -7px #10b981aa}
+.btn-dark{background:var(--ink);color:#fff;padding:.78rem 1.4rem;font-size:.92rem;box-shadow:var(--sh-sm)}
+.btn-dark:hover{transform:translateY(-2px);box-shadow:var(--sh)}
+.btn-ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line-2);padding:.78rem 1.4rem;font-size:.92rem}
+.btn-ghost:hover{border-color:var(--muted)}
+.btn-text{background:none;color:var(--muted);font-weight:600;font-family:var(--font-display);font-size:.88rem;cursor:pointer;border:none;padding:.4rem .2rem}
+.btn-text:hover{color:var(--ink)}
+
+/* — Top-Nav (Marketing-Seiten) — */
+.nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:center;
+  padding:.9rem 1.8rem;background:#f5f7f9d8;backdrop-filter:blur(12px);border-bottom:1px solid var(--line-2)}
+.nav .logo{font-family:var(--font-display);font-weight:700;font-size:1.35rem;letter-spacing:-.04em;text-decoration:none;color:var(--ink)}
+.nav .logo span{color:var(--green)}
+.nav .links{display:flex;align-items:center;gap:.4rem}
+.nav .links a{font-family:var(--font-display);font-size:.86rem;font-weight:600;color:var(--muted);text-decoration:none;padding:.5rem .85rem;border-radius:9px}
+.nav .links a:hover{color:var(--ink);background:var(--line)}
+
+/* — App-Statusleiste (Lern-Ansicht) — */
+.statusbar{position:sticky;top:0;z-index:40;background:#f5f7f9d8;backdrop-filter:blur(12px);border-bottom:1px solid var(--line-2)}
+.statusbar .inner{max-width:var(--readw);margin:0 auto;padding:.65rem 1.5rem;display:flex;align-items:center;gap:1.1rem;font-family:var(--font-display);font-size:.76rem;color:var(--muted)}
+.statusbar .logo{font-family:var(--font-display);font-weight:700;font-size:1.05rem;letter-spacing:-.04em;color:var(--ink);text-decoration:none}
+.statusbar .logo span{color:var(--green)}
+.statusbar .sp{flex:1}
+.statusbar b{color:var(--ink)} .statusbar .up{color:var(--green-d)}
+.progressbar{height:3px;background:var(--line)}
+.progressbar > i{display:block;height:100%;background:var(--green);transition:width .4s var(--ease)}
+
+/* — Karten — */
+.card{background:var(--surface);border:1px solid var(--line-2);border-radius:var(--r-lg);box-shadow:var(--sh-sm);transition:transform .25s var(--ease),box-shadow .25s}
+.card.hover:hover{transform:translateY(-4px);box-shadow:var(--sh)}
+
+/* — Tabs (Lektion / Vokabeln / Quiz / Spiel) — */
+.tabs{display:flex;gap:.25rem;background:var(--surface);border:1px solid var(--line-2);border-radius:12px;padding:.3rem;width:fit-content;box-shadow:var(--sh-sm)}
+.tab{font-family:var(--font-display);font-weight:600;font-size:.82rem;color:var(--muted);padding:.5rem .9rem;border-radius:9px;cursor:pointer;border:none;background:none;display:flex;gap:.45rem;align-items:center}
+.tab svg{width:15px;height:15px}
+.tab[aria-selected="true"]{background:var(--ink);color:#fff}
+
+/* — Lektion: Schritt-Karte — */
+.lesson-meta{font-family:var(--font-display);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--green-d)}
+.lesson-title{font-size:clamp(1.9rem,4vw,2.5rem);line-height:1.08;margin:.45rem 0 .3rem}
+.lesson-sub{color:var(--muted);margin-bottom:1.5rem}
+.step{background:var(--surface);border:1px solid var(--line-2);border-radius:var(--r-lg);box-shadow:var(--sh);overflow:hidden}
+.step[hidden]{display:none}
+.step-head{display:flex;align-items:center;justify-content:space-between;padding:.95rem 1.4rem;border-bottom:1px solid var(--line)}
+.phase{font-family:var(--font-display);font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--green-d);background:var(--green-soft);padding:.28rem .65rem;border-radius:6px}
+.dots{display:flex;gap:.35rem;align-items:center}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--line-2)}
+.dot.on{background:var(--green);width:20px;border-radius:6px}
+.dot.done{background:var(--green-d)}
+.step-body{padding:1.6rem 1.5rem 1.7rem}
+.step-body h2{font-size:1.4rem;margin-bottom:.6rem}
+.lead{color:#3c4456;font-size:1.04rem;margin-bottom:1.3rem}
+.def{background:var(--soft);border:1px solid var(--line);border-left:3px solid var(--green);border-radius:0 var(--r) var(--r) 0;padding:.9rem 1.1rem;margin-bottom:1.3rem;font-size:.95rem}
+.def b{color:var(--ink)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.mini{background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:1rem 1.1rem}
+.mini .t{font-family:var(--font-display);font-weight:700;font-size:.92rem;margin-bottom:.3rem}
+.mini.c .t{color:var(--green-d)} .mini.s .t{color:var(--muted)}
+.mini p{font-size:.86rem;color:#4a5365}
+
+/* Chart-Block in der Lektion */
+.chart-head{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin-bottom:.8rem;flex-wrap:wrap}
+.chart-head .big{font-family:var(--font-display);font-weight:700;font-size:2rem;line-height:1}
+.chart-head .big small{font-size:.9rem;color:var(--muted);font-weight:500}
+.chart-head .pill{font-family:var(--font-display);font-weight:700;font-size:.9rem;color:var(--green-d);background:var(--green-soft);border:1px solid #10b9812e;padding:.3rem .7rem;border-radius:999px}
+.ctrls{display:grid;grid-template-columns:1fr 1fr;gap:.9rem 1.5rem;margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--line)}
+.ctrl .cl{display:flex;justify-content:space-between;font-size:.76rem;color:var(--muted);margin-bottom:.35rem;font-weight:500}
+.ctrl .cl b{font-family:var(--font-display);color:var(--green-d)}
+input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:999px;background:var(--soft);outline-offset:4px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:19px;height:19px;border-radius:50%;background:#fff;border:2px solid var(--green);box-shadow:0 2px 6px rgba(12,19,34,.2);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;background:#fff;border:2px solid var(--green);cursor:pointer}
+
+/* Kernaussage / Hinweis / Erkenntnisse */
+.take{display:flex;gap:.6rem;background:var(--green-soft);border:1px solid #10b98130;border-radius:var(--r);padding:.9rem 1rem;margin-top:1.3rem;font-size:.93rem;color:#2c3a3f}
+.take .k{font-family:var(--font-display);font-size:.64rem;font-weight:600;color:var(--green-d);text-transform:uppercase;letter-spacing:.09em;display:block;margin-bottom:.15rem}
+.take b{color:var(--ink)}
+.statcard{background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:1.2rem;margin-bottom:.8rem}
+.statcard .lab{font-family:var(--font-display);font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:.7rem}
+.statrow{display:flex;gap:1.4rem}
+.statrow .s b{display:block;font-family:var(--font-display);font-weight:700;font-size:1.5rem}
+.statrow .s span{font-size:.74rem;color:var(--muted)}
+.statrow .s.win b{color:var(--green-d)} .statrow .s.lose b{color:var(--muted)}
+.note-card{background:#e5484d0c;border:1px solid #e5484d30;border-radius:var(--r);padding:.95rem 1.1rem;font-size:.92rem;color:#5a2f31}
+.note-card .k{font-family:var(--font-display);font-size:.64rem;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:.09em;display:block;margin-bottom:.15rem}
+.ins{display:flex;gap:.9rem;align-items:flex-start;padding:.9rem 0;border-top:1px solid var(--line)}
+.ins:first-child{border-top:none}
+.ins .n{width:28px;height:28px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:.85rem;background:var(--green-soft);color:var(--green-d)}
+.ins.key .n{background:var(--green);color:#fff}
+.ins .t b{font-family:var(--font-display);font-weight:700;font-size:.98rem;display:block;margin-bottom:.2rem}
+.ins .t p{font-size:.9rem;color:#4a5365}
+
+/* Schritt-Navigation */
+.step-nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-top:1px solid var(--line);background:var(--soft)}
+.step-count{font-family:var(--font-display);font-size:.74rem;color:var(--muted)}
+
+@media(max-width:560px){.two,.ctrls{grid-template-columns:1fr}}
+@media(max-width:760px){.nav .links a:not(.btn){display:none}}
