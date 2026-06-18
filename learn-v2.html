@@ -32,16 +32,17 @@
 
 <!-- HOME -->
 <main class="app screen active" id="home-screen">
-  <div class="home-hero">
+  <div class="home-hero rev d1">
     <h1>Willkommen zurück.</h1>
     <p>Echte Finanzen, Schritt für Schritt. Mach da weiter, wo du aufgehört hast.</p>
   </div>
-  <div class="stats-row">
-    <div class="stat-card"><span class="v" id="st-done">0</span><span class="l">Kapitel fertig</span></div>
-    <div class="stat-card"><span class="v" id="st-xp">0</span><span class="l">XP gesamt</span></div>
-    <div class="stat-card"><span class="v" id="st-streak">0🔥</span><span class="l">Tage-Streak</span></div>
+  <div id="continue" class="rev d2"></div>
+  <div class="stats-row rev d3">
+    <div class="stat-card c1"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6"/></svg></div><div class="tx"><span class="v" id="st-done">0</span><span class="l">Kapitel fertig</span></div></div>
+    <div class="stat-card c2"><div class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4.5 13.5H11l-1 8.5 8.5-11.5H12z"/></svg></div><div class="tx"><span class="v" id="st-xp">0</span><span class="l">XP gesamt</span></div></div>
+    <div class="stat-card c3"><div class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1.2 3-2 4.2-2 7a2 2 0 104 0c2 1.8 3 3.8 3 6a5 5 0 11-10 0C5 11 12 10 12 2z"/></svg></div><div class="tx"><span class="v" id="st-streak">0🔥</span><span class="l">Tage-Streak</span></div></div>
   </div>
-  <div id="units"></div>
+  <div id="units" class="rev d4"></div>
 </main>
 
 <!-- KAPITEL -->
@@ -169,15 +170,28 @@ function renderHome(){
   el("st-done").textContent = state.completedChapters.length;
   el("st-xp").textContent = state.xp.toLocaleString("de-CH");
   el("st-streak").textContent = currentStreak()+"🔥";
+  // "Weitermachen"-Karte: nächstes startbares, noch nicht fertiges Kapitel
+  const next = Object.keys(CHAPTERS).map(Number).sort((a,b)=>a-b).find(id=>!state.completedChapters.includes(id));
+  const cont = el("continue");
+  if(next){
+    const m=META[next];
+    cont.style.display="";
+    cont.innerHTML = `<button class="continue" data-open="${next}">
+      <span class="play"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+      <span class="ct"><span class="k">Weitermachen</span><b>Kapitel ${String(next).padStart(2,"0")}: ${m.t}</b><span>${m.s}</span></span>
+      <span class="arrow">→</span></button>`;
+    cont.querySelector("[data-open]").onclick=()=>openChapter(next);
+  } else { cont.style.display="none"; }
+  // Units mit Farb-Kodierung
   el("units").innerHTML = UNITS.map(u=>`
-    <div class="unit-block">
+    <div class="unit-block" data-u="${u.n}">
       <div class="unit-label">Unit ${String(u.n).padStart(2,"0")}</div>
       <div class="unit-name">${u.name}</div>
       ${u.ch.map(id=>{
         const m=META[id], done=state.completedChapters.includes(id), ready=!!CHAPTERS[id];
         const badge = done?'<span class="ch-badge done">✓ Fertig</span>' : ready?'<span class="ch-badge start">▶ Start</span>' : '<span class="ch-badge soon">bald</span>';
-        return `<button class="chapter-row ${ready?'':'locked'}" ${ready?`data-open="${id}"`:'disabled'}>
-          <span class="num">${String(id).padStart(2,"0")}</span>
+        return `<button class="chapter-row ${ready?'':'locked'}" data-u="${u.n}" ${ready?`data-open="${id}"`:'disabled'}>
+          <span class="num">${done?'✓':String(id).padStart(2,"0")}</span>
           <span class="info"><b>${m.t}</b><span>${m.s}</span></span>
           <span class="xp">+${m.xp} XP</span>${badge}
         </button>`;
